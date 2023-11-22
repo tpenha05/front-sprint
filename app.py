@@ -124,8 +124,10 @@ def pagina_partidas(partidas):
         df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
     df_filtrado = df_filtrado[(df_filtrado['data'] >= data_inicial) & (df_filtrado['data'] <= data_final)]
 
-    st.dataframe(df_filtrado)
-
+    for index, partida in df_filtrado.iterrows():
+        with st.expander(f"{partida['clube']} vs {partida['adversario']} - {partida['data'].strftime('%d/%m/%Y')}"):
+            st.write(f"Resultado: {partida['resultado']}")
+    
 
 partidas_teste = [
     {"clube": "Palmeiras", "adversario": "Bragantino", "data": "21/09/2022", "resultado": "1x1"},
