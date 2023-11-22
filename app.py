@@ -95,16 +95,38 @@ def pagina_configuracoes():
     st.title("Configurações")
     # Adicione configurações ou opções aqui
 
+def pagina_partidas(partidas):
+    st.title("Partidas")
+
+    df_partidas = pd.DataFrame(partidas)
+
+    if df_partidas.empty:
+        st.write("Não há partidas cadastradas.")
+        return
+    
+    clubes = df_partidas['clube'].unique().tolist()
+    adversarios = df_partidas['adversario'].unique().tolist()
+    datas = df_partidas['data'].unique().tolist()
+        
+    st.dataframe(df_partidas)
+
+partidas_teste = [
+    {"clube": "Palmeiras", "adversario": "Bragantino", "data": "21/09/2022", "resultado": "1x1"},
+    {"clube": "Flamengo", "adversario": "Vasco", "data": "21/09/2021", "resultado": "33x8"},
+    {"clube": "Real Madri", "adversario": "Barcelona", "data": "22/10/2022", "resultado": "7x1"}]
+
 # Função principal para controlar a navegação entre as páginas
 def paginas():
     # Criando uma barra lateral personalizada com botões
     st.sidebar.title("Dashboard")
-    if st.sidebar.button("Partidas"):
+    if st.sidebar.button("Página Inicial"):
         pagina_inicial()
     if st.sidebar.button("Quebra de linha de defesa"):
         pagina_dados()
     if st.sidebar.button("Cruzamento"):
         pagina_configuracoes()
+    if st.sidebar.button("Partidas"):
+        pagina_partidas(partidas_teste)
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
