@@ -12,16 +12,31 @@ usuarios_cadastrados = {
 def verifica_credenciais(username, senha):
     return usuarios_cadastrados.get(username) == senha
 
+# Função para adicionar novos usuários
+def adicionar_usuario(username, senha):
+    if username not in usuarios_cadastrados:
+        usuarios_cadastrados[username] = senha
+        return True
+    return False
+
 # Função principal para o aplicativo
 def main():
-
-    # Página de login
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
-        
-        st.title("Data Goal")
+        login_cadastro()
+    else:
+        paginas()
+
+def login_cadastro():
+    st.title("Data Goal")
+
+    # Abas para Login e Cadastro
+    tab1, tab2 = st.tabs(["Login", "Cadastrar"])
+
+    # Aba de Login
+    with tab1:
         st.header("Faça login")
-        username = st.text_input("Usuário:")
-        senha = st.text_input("Senha:", type='password')
+        username = st.text_input("Usuário:", key="login_username")
+        senha = st.text_input("Senha:", type='password', key="login_password")
 
         if st.button("Login"):
             if verifica_credenciais(username, senha):
@@ -30,11 +45,18 @@ def main():
                 st.rerun()
             else:
                 st.error("Credenciais inválidas. Tente novamente.")
-            
 
-    # Página protegida
-    else:
-        paginas()
+    # Aba de Cadastro
+    with tab2:
+        st.header("Cadastrar novo usuário")
+        new_username = st.text_input("Novo usuário:", key="new_username")
+        new_password = st.text_input("Nova senha:", type='password', key="new_password")
+
+        if st.button("Cadastrar"):
+            if adicionar_usuario(new_username, new_password):
+                st.success("Usuário cadastrado com sucesso!")
+            else:
+                st.error("Usuário já existe.")
 
 # Função para exibir a página inicial
 def pagina_inicial():
