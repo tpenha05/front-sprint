@@ -1,11 +1,13 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from datetime import datetime
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
     'usuario1': 'senha123',
-    'usuario2': 'senha456'
+    'usuario2': 'senha456',
+    '1':'1'
 }
 
 # Função para verificar as credenciais
@@ -99,33 +101,51 @@ def pagina_partidas(partidas):
     st.title("Partidas")
 
     df_partidas = pd.DataFrame(partidas)
+    df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
     if df_partidas.empty:
         st.write("Não há partidas cadastradas.")
         return
-    
-    clubes = df_partidas['clube'].unique().tolist()
-    adversarios = df_partidas['adversario'].unique().tolist()
-    datas = df_partidas['data'].unique().tolist()
-        
-    st.dataframe(df_partidas)
+
+    adversarios = ["Todos"] + sorted(df_partidas['adversario'].unique().tolist())
+    adversario_selecionado = st.selectbox("Selecione o Adversário", adversarios)
+
+    min_data, max_data = df_partidas['data'].min(), df_partidas['data'].max()
+    data_inicial, data_final = st.slider(
+        "Selecione o Intervalo de Datas",
+        min_value=min_data,
+        max_value=max_data,
+        value=(min_data, max_data),
+        format="DD/MM/YYYY"
+    )
+
+    df_filtrado = df_partidas.copy()
+    if adversario_selecionado != "Todos":
+        df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
+    df_filtrado = df_filtrado[(df_filtrado['data'] >= data_inicial) & (df_filtrado['data'] <= data_final)]
+
+    st.dataframe(df_filtrado)
+
 
 partidas_teste = [
     {"clube": "Palmeiras", "adversario": "Bragantino", "data": "21/09/2022", "resultado": "1x1"},
-    {"clube": "Flamengo", "adversario": "Vasco", "data": "21/09/2021", "resultado": "33x8"},
-    {"clube": "Real Madri", "adversario": "Barcelona", "data": "22/10/2022", "resultado": "7x1"}]
+    {"clube": "Palmeiras", "adversario": "Vasco", "data": "21/09/2021", "resultado": "33x8"},
+    {"clube": "Palmeiras", "adversario": "Barcelona", "data": "22/10/2022", "resultado": "7x1"}]
 
 # Função principal para controlar a navegação entre as páginas
 def paginas():
-    # Criando uma barra lateral personalizada com botões
+    # Criando uma barra lateral personalizada com um seletor de página
     st.sidebar.title("Dashboard")
-    if st.sidebar.button("Página Inicial"):
+    opcao_pagina = st.sidebar.radio("Escolha a Página:", ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"])
+
+    # Carregando a página selecionada
+    if opcao_pagina == "Página Inicial":
         pagina_inicial()
-    if st.sidebar.button("Quebra de linha de defesa"):
+    elif opcao_pagina == "Quebra de linha de defesa":
         pagina_dados()
-    if st.sidebar.button("Cruzamento"):
+    elif opcao_pagina == "Cruzamento":
         pagina_configuracoes()
-    if st.sidebar.button("Partidas"):
+    elif opcao_pagina == "Partidas":
         pagina_partidas(partidas_teste)
 
 # Chamando a função principal para iniciar o aplicativo
