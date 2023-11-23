@@ -29,5 +29,3 @@ def obter_clube_usuario():
     except requests.RequestException as e:
         print(f"Erro ao obter o clube: {e}")
         return None
-
-print(partidas())
