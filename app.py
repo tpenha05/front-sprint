@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
+from funcoes import *
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -31,34 +32,33 @@ def main():
 def login_cadastro():
     st.title("Data Goal")
 
-    # Abas para Login e Cadastro
     tab1, tab2 = st.tabs(["Login", "Cadastrar"])
 
-    # Aba de Login
     with tab1:
         st.header("Faça login")
-        username = st.text_input("Usuário:", key="login_username")
+        email = st.text_input("E-mail:", key="login_email")
         senha = st.text_input("Senha:", type='password', key="login_password")
-
+        time = st.text_input("Time", key="time")
         if st.button("Login"):
-            if verifica_credenciais(username, senha):
+            response = login(email, senha,time)
+            if response.ok:
                 st.success("Login bem-sucedido!")
-                st.session_state.usuario = username
+                st.session_state.usuario = email
                 st.rerun()
             else:
                 st.error("Credenciais inválidas. Tente novamente.")
 
-    # Aba de Cadastro
     with tab2:
         st.header("Cadastrar novo usuário")
-        new_username = st.text_input("Novo usuário:", key="new_username")
+        new_email = st.text_input("E-mail:", key="new_email")
         new_password = st.text_input("Nova senha:", type='password', key="new_password")
-
+        new_time = st.text_input("Time",key="new_time")
         if st.button("Cadastrar"):
-            if adicionar_usuario(new_username, new_password):
+            response = cadastra_usuario(new_email, new_password, new_time)
+            if response.ok:
                 st.success("Usuário cadastrado com sucesso!")
             else:
-                st.error("Usuário já existe.")
+                st.error(response.text)
 
 # Função para exibir a página inicial
 def pagina_inicial():
@@ -148,7 +148,7 @@ def paginas():
     elif opcao_pagina == "Cruzamento":
         pagina_configuracoes()
     elif opcao_pagina == "Partidas":
-        pagina_partidas(partidas_teste)
+        pagina_partidas(partidas())
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
