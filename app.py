@@ -26,6 +26,9 @@ def adicionar_usuario(username, senha):
 def main():
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
         login_cadastro()
+    elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
+        st.session_state['ir_para_analise'] = False
+        dashboard_analise()
     else:
         paginas()
 
@@ -38,9 +41,15 @@ def login_cadastro():
         st.header("Faça login")
         email = st.text_input("E-mail:", key="login_email")
         senha = st.text_input("Senha:", type='password', key="login_password")
-        time = st.text_input("Time", key="time")
+        
+        # Use uma chave diferente para o text_input e o session_state
+        clube_input = st.text_input("Clube:", key="clube_input")
+
         if st.button("Login"):
-            response = login(email, senha,time)
+            if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
+                st.session_state['clube'] = clube_input
+            
+            response = login(email, senha)
             if response.ok:
                 st.success("Login bem-sucedido!")
                 st.session_state.usuario = email
@@ -52,13 +61,15 @@ def login_cadastro():
         st.header("Cadastrar novo usuário")
         new_email = st.text_input("E-mail:", key="new_email")
         new_password = st.text_input("Nova senha:", type='password', key="new_password")
-        new_time = st.text_input("Time",key="new_time")
+        new_time = st.text_input("Time", key="new_time")
+
         if st.button("Cadastrar"):
             response = cadastra_usuario(new_email, new_password, new_time)
             if response.ok:
                 st.success("Usuário cadastrado com sucesso!")
             else:
                 st.error(response.text)
+
 
 # Função para exibir a página inicial
 def pagina_inicial():
@@ -98,14 +109,16 @@ def pagina_configuracoes():
     # Adicione configurações ou opções aqui
 
 def pagina_partidas(partidas):
-    st.title("Partidas")
+    st.title(f"Partidas")
 
+    if 'clube' in st.session_state:
+        clube_usuario = st.session_state['clube']
+        st.write(f"O clube do usuário é: {clube_usuario}")
+    else:
+        st.write("Clube não definido ou não informado.")
+   
     df_partidas = pd.DataFrame(partidas)
     df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
-
-    if df_partidas.empty:
-        st.write("Não há partidas cadastradas.")
-        return
 
     adversarios = ["Todos"] + sorted(df_partidas['adversario'].unique().tolist())
     adversario_selecionado = st.selectbox("Selecione o Adversário", adversarios)
@@ -127,28 +140,40 @@ def pagina_partidas(partidas):
     for index, partida in df_filtrado.iterrows():
         with st.expander(f"{partida['clube']} vs {partida['adversario']} - {partida['data'].strftime('%d/%m/%Y')}"):
             st.write(f"Resultado: {partida['resultado']}")
+
+            # Usando uma chave de estado separada para o botão
+            if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
+                st.session_state['ir_para_analise'] = True
+
+def dashboard_analise():
+    st.title("Dashboard")
+
+    if st.button("Voltar para Análises de Jogos"):
+        st.session_state['opcao_pagina'] = "Partidas" 
+        st.experimental_rerun()
     
-
-partidas_teste = [
-    {"clube": "Palmeiras", "adversario": "Bragantino", "data": "21/09/2022", "resultado": "1x1"},
-    {"clube": "Palmeiras", "adversario": "Vasco", "data": "21/09/2021", "resultado": "33x8"},
-    {"clube": "Palmeiras", "adversario": "Barcelona", "data": "22/10/2022", "resultado": "7x1"}]
-
 # Função principal para controlar a navegação entre as páginas
 def paginas():
-    # Criando uma barra lateral personalizada com um seletor de página
     st.sidebar.title("Dashboard")
-    opcao_pagina = st.sidebar.radio("Escolha a Página:", ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"])
+    opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"]
+    opcao_pagina = st.sidebar.radio("Escolha a Página:", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Página Inicial')))
 
-    # Carregando a página selecionada
-    if opcao_pagina == "Página Inicial":
-        pagina_inicial()
-    elif opcao_pagina == "Quebra de linha de defesa":
-        pagina_dados()
-    elif opcao_pagina == "Cruzamento":
-        pagina_configuracoes()
-    elif opcao_pagina == "Partidas":
-        pagina_partidas(partidas())
+    # Condicional para 'Página de Análise'
+    if st.session_state.get('opcao_pagina') == "Página de Análise":
+        dashboard_analise()
+    else:
+        # Carregando a página selecionada
+        if opcao_pagina == "Página Inicial":
+            pagina_inicial()
+        elif opcao_pagina == "Quebra de linha de defesa":
+            pagina_dados()
+        elif opcao_pagina == "Cruzamento":
+            pagina_configuracoes()
+        elif opcao_pagina == "Partidas":
+            dados_partidas = partidas()
+            pagina_partidas(dados_partidas)
+
+
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
