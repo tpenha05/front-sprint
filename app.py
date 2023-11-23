@@ -38,9 +38,15 @@ def login_cadastro():
         st.header("Faça login")
         email = st.text_input("E-mail:", key="login_email")
         senha = st.text_input("Senha:", type='password', key="login_password")
-        time = st.text_input("Time", key="time")
+        
+        # Use uma chave diferente para o text_input e o session_state
+        clube_input = st.text_input("Clube:", key="clube_input")
+
         if st.button("Login"):
-            response = login(email, senha,time)
+            if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
+                st.session_state['clube'] = clube_input
+            
+            response = login(email, senha)
             if response.ok:
                 st.success("Login bem-sucedido!")
                 st.session_state.usuario = email
@@ -52,13 +58,15 @@ def login_cadastro():
         st.header("Cadastrar novo usuário")
         new_email = st.text_input("E-mail:", key="new_email")
         new_password = st.text_input("Nova senha:", type='password', key="new_password")
-        new_time = st.text_input("Time",key="new_time")
+        new_time = st.text_input("Time", key="new_time")
+
         if st.button("Cadastrar"):
             response = cadastra_usuario(new_email, new_password, new_time)
             if response.ok:
                 st.success("Usuário cadastrado com sucesso!")
             else:
                 st.error(response.text)
+
 
 # Função para exibir a página inicial
 def pagina_inicial():
@@ -100,12 +108,17 @@ def pagina_configuracoes():
 def pagina_partidas(partidas):
     st.title("Partidas")
 
-    df_partidas = pd.DataFrame(partidas)
-    df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
+    if 'clube' in st.session_state:
+        clube_usuario = st.session_state['clube']
+        st.write(f"O clube do usuário é: {clube_usuario}")
+    else:
+        st.write("Clube não definido ou não informado.")
 
-    if df_partidas.empty:
-        st.write("Não há partidas cadastradas.")
-        return
+    st.write(partidas)
+   
+    df_partidas = pd.DataFrame(partidas)
+    st.write(df_partidas)
+    df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
     adversarios = ["Todos"] + sorted(df_partidas['adversario'].unique().tolist())
     adversario_selecionado = st.selectbox("Selecione o Adversário", adversarios)
@@ -129,10 +142,7 @@ def pagina_partidas(partidas):
             st.write(f"Resultado: {partida['resultado']}")
     
 
-partidas_teste = [
-    {"clube": "Palmeiras", "adversario": "Bragantino", "data": "21/09/2022", "resultado": "1x1"},
-    {"clube": "Palmeiras", "adversario": "Vasco", "data": "21/09/2021", "resultado": "33x8"},
-    {"clube": "Palmeiras", "adversario": "Barcelona", "data": "22/10/2022", "resultado": "7x1"}]
+partidas_teste = [ { "adversario": "Bragantino", "clube": "Santos", "data": "21/09/2022", "resultado": "1x1" } ]
 
 # Função principal para controlar a navegação entre as páginas
 def paginas():
@@ -148,7 +158,8 @@ def paginas():
     elif opcao_pagina == "Cruzamento":
         pagina_configuracoes()
     elif opcao_pagina == "Partidas":
-        pagina_partidas(partidas())
+        dados_partidas = partidas()
+        pagina_partidas(dados_partidas)
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
