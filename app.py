@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 from funcoes import *
+from dashboard import *
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -28,9 +29,46 @@ def main():
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
         st.session_state['ir_para_analise'] = False
-        dashboard_analise()
+        with open('dados/quebra.json', 'r') as f:
+            data = json.load(f)
+            time = 'Palmeiras'
+            id = '1'
+        trata_dados(data, time, id, 'quebra')
     else:
         paginas()
+
+
+def trata_dados(dados, time, id, tipo):
+    #jogadores n rupturas
+        dicionario_rupturas = {}
+        for ruptura in dados['time']['1']['rupturas']:
+            if ruptura['nome_jogador_ruptura'] not in dicionario_rupturas:
+                dicionario_rupturas[ruptura['nome_jogador_ruptura']] = 0
+            nome = ruptura['nome_jogador_ruptura']
+            dicionario_rupturas[nome] += 1
+        # Criando um DataFrame com as chaves e valores do dicionário
+        data = dados['time']['1']['desfechos']
+
+        df = pd.DataFrame(list(data.items()), columns=['Coluna', 'Valores'])
+        df.head()
+
+        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
+
+        dashboard_quebra(df, cores_personalizadas, dicionario_rupturas)
+
+def dashboard_quebra(df_desfechos, cores_personalizadas, df_rupturas):
+    if st.button("Voltar"):
+        st.session_state['ir_para_analise'] = True
+        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("Geral")
+        fig = px.pie(df_desfechos, values='Valores', names='Coluna', title='Gráfico de Pizza Interativo',color_discrete_sequence=cores_personalizadas)
+        st.plotly_chart(fig)
+        st.dataframe(df_rupturas) 
+    with col2:
+        fig = px.bar(df_desfechos, x='Coluna', y='Valores', title='Gráfico de Barras Interativo',color_discrete_sequence=cores_personalizadas)
+        st.plotly_chart(fig)
 
 def login_cadastro():
     st.title("Data Goal")
@@ -145,12 +183,6 @@ def pagina_partidas(partidas):
             if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
                 st.session_state['ir_para_analise'] = True
 
-def dashboard_analise():
-    st.title("Dashboard")
-
-    if st.button("Voltar para Análises de Jogos"):
-        st.session_state['opcao_pagina'] = "Partidas" 
-        st.experimental_rerun()
     
 # Função principal para controlar a navegação entre as páginas
 def paginas():
@@ -158,20 +190,18 @@ def paginas():
     opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"]
     opcao_pagina = st.sidebar.radio("Escolha a Página:", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Página Inicial')))
 
-    # Condicional para 'Página de Análise'
-    if st.session_state.get('opcao_pagina') == "Página de Análise":
-        dashboard_analise()
-    else:
         # Carregando a página selecionada
-        if opcao_pagina == "Página Inicial":
-            pagina_inicial()
-        elif opcao_pagina == "Quebra de linha de defesa":
-            pagina_dados()
-        elif opcao_pagina == "Cruzamento":
-            pagina_configuracoes()
-        elif opcao_pagina == "Partidas":
-            dados_partidas = partidas()
-            pagina_partidas(dados_partidas)
+    if opcao_pagina == "Página Inicial":
+        pagina_inicial()
+    elif opcao_pagina == "Quebra de linha de defesa":
+        pagina_dados()
+    elif opcao_pagina == "Cruzamento":
+        pagina_configuracoes()
+    elif opcao_pagina == "Partidas":
+        dados_partidas = partidas()
+        pagina_partidas(dados_partidas)
+    else:
+        st.error("Página não encontrada.")
 
 
 
