@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 from funcoes import *
+from PIL import Image
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -33,42 +34,53 @@ def main():
         paginas()
 
 def login_cadastro():
-    st.title("Data Goal")
+    
+    # st.set_page_config(layout="wide")
+    with open("design/style/styles.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["Login", "Cadastrar"])
+    col1, col2, col3 = st.columns([2,1,2])
 
-    with tab1:
-        st.header("Faça login")
-        email = st.text_input("E-mail:", key="login_email")
-        senha = st.text_input("Senha:", type='password', key="login_password")
-        
-        # Use uma chave diferente para o text_input e o session_state
-        clube_input = st.text_input("Clube:", key="clube_input")
+    with col1:
+        image = Image.open('design/photos/logo.webp')
+        st.image(image)
+        st.subheader('Artificial Intelligence to monitor players every instant of every match')
 
-        if st.button("Login"):
-            if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
-                st.session_state['clube'] = clube_input
+
+    with col3:
+        tab1, tab2 = st.tabs(["Login", "Sign Up"])
+        with tab1:
+            st.header("Login")
+            email = st.text_input("E-mail:", key="login_email")
+            senha = st.text_input("Senha:", type='password', key="login_password")
             
-            response = login(email, senha)
-            if response.ok:
-                st.success("Login bem-sucedido!")
-                st.session_state.usuario = email
-                st.rerun()
-            else:
-                st.error("Credenciais inválidas. Tente novamente.")
+            # Use uma chave diferente para o text_input e o session_state
+            clube_input = st.text_input("Clube:", key="clube_input")
 
-    with tab2:
-        st.header("Cadastrar novo usuário")
-        new_email = st.text_input("E-mail:", key="new_email")
-        new_password = st.text_input("Nova senha:", type='password', key="new_password")
-        new_time = st.text_input("Time", key="new_time")
+            if st.button("Login"):
+                if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
+                    st.session_state['clube'] = clube_input
+                
+                response = login(email, senha)
+                if response.ok:
+                    st.success("Login bem-sucedido!")
+                    st.session_state.usuario = email
+                    st.rerun()
+                else:
+                    st.error("Credenciais inválidas. Tente novamente.")
 
-        if st.button("Cadastrar"):
-            response = cadastra_usuario(new_email, new_password, new_time)
-            if response.ok:
-                st.success("Usuário cadastrado com sucesso!")
-            else:
-                st.error(response.text)
+        with tab2:
+            st.header("Sign Up")
+            new_email = st.text_input("E-mail:", key="new_email")
+            new_password = st.text_input("Senha:", type='password', key="new_password")
+            new_time = st.text_input("Clube:", key="new_time")
+
+            if st.button("Sign Up"):
+                response = cadastra_usuario(new_email, new_password, new_time)
+                if response.ok:
+                    st.success("Usuário cadastrado com sucesso!")
+                else:
+                    st.error(response.text)
 
 
 # Função para exibir a página inicial
