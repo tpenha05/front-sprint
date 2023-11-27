@@ -39,23 +39,23 @@ def main():
 
 
 def trata_dados(dados, time, id, tipo):
-    #jogadores n rupturas
-        dicionario_rupturas = {}
-        for ruptura in dados['time']['1']['rupturas']:
-            if ruptura['nome_jogador_ruptura'] not in dicionario_rupturas:
-                dicionario_rupturas[ruptura['nome_jogador_ruptura']] = 0
-            nome = ruptura['nome_jogador_ruptura']
-            dicionario_rupturas[nome] += 1
-        # Criando um DataFrame com as chaves e valores do dicionário
-        data = dados['time']['1']['desfechos']
+    #jogadores numero de rupturas
+        dicionario_rupturas = [{}]
+        time = '1' #palmeiras
+        time2 = '5'#redbull 
+        for ruptura in dados['time'][time]['rupturas']:
+            for i in dicionario_rupturas.len():
+                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
+                  dicionario_rupturas[i] = {"instante_ruptura": ruptura['instante_ruptura'], "inicio_ruptura": ruptura['inicio_ruptura'], 'zona': ruptura['zona_defesa'], 'desfecho': ruptura['desfecho']}
+            data = dados['time']['1']['desfechos']
+            df = pd.DataFrame(list(data.items()), columns=['Coluna', 'Valores'])
+            df.head()
+            cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
+    #Jogadores envolvidos
 
-        df = pd.DataFrame(list(data.items()), columns=['Coluna', 'Valores'])
-        df.head()
-
-        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
 
         dashboard_quebra(df, cores_personalizadas, dicionario_rupturas)
-
+    #Front DashBoard
 def dashboard_quebra(df_desfechos, cores_personalizadas, df_rupturas):
     if st.button("Voltar"):
         st.session_state['ir_para_analise'] = True
