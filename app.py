@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 from funcoes import *
+from controle_geral import pag_adm
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -154,24 +155,30 @@ def dashboard_analise():
     
 # Função principal para controlar a navegação entre as páginas
 def paginas():
-    st.sidebar.title("Dashboard")
-    opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"]
-    opcao_pagina = st.sidebar.radio("Escolha a Página:", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Página Inicial')))
 
-    # Condicional para 'Página de Análise'
-    if st.session_state.get('opcao_pagina') == "Página de Análise":
-        dashboard_analise()
-    else:
-        # Carregando a página selecionada
-        if opcao_pagina == "Página Inicial":
-            pagina_inicial()
-        elif opcao_pagina == "Quebra de linha de defesa":
-            pagina_dados()
-        elif opcao_pagina == "Cruzamento":
-            pagina_configuracoes()
-        elif opcao_pagina == "Partidas":
-            dados_partidas = partidas()
-            pagina_partidas(dados_partidas)
+    clube = st.session_state['clube']
+
+    if clube == "admin":
+        pag_adm()
+
+    else:    
+        st.sidebar.title("Dashboard")
+        opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"]
+        opcao_pagina = st.sidebar.radio("Escolha a Página:", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Página Inicial')))
+        # Condicional para 'Página de Análise'
+        if st.session_state.get('opcao_pagina') == "Página de Análise":
+            dashboard_analise()
+        else:
+            # Carregando a página selecionada
+            if opcao_pagina == "Página Inicial":
+                pagina_inicial()
+            elif opcao_pagina == "Quebra de linha de defesa":
+                pagina_dados()
+            elif opcao_pagina == "Cruzamento":
+                pagina_configuracoes()
+            elif opcao_pagina == "Partidas":
+                dados_partidas = partidas()
+                pagina_partidas(dados_partidas)
 
 
 
