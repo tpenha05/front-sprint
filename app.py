@@ -64,10 +64,7 @@ def trata_dados(dados, time, id, tipo):
         
         total_desfechos = dados['time'][id]['desfechos']
         df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
-        print(dicionario_rupturas)
-        df_rupturas = pd.DataFrame(dicionario_rupturas)
-        print(df_rupturas)
-        trata_video(df_rupturas)
+        trata_video(dicionario_rupturas)
         df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
         cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
         ######
@@ -82,7 +79,13 @@ def converter_tempo_para_segundos(tempo_str):
     return horas * 3600 + minutos * 60 + segundos
 
 def trata_video(data_rupturas,click):
-    pass
+    
+    df_rupturas = pd.DataFrame(data_rupturas)
+    lista_tempo_rupturas = []
+    for ruptura_tempo_sec in df_rupturas["inicio_ruptura"]:
+        inicio_video = converter_tempo_para_segundos(ruptura_tempo_sec) - 5
+        final_video = converter_tempo_para_segundos(ruptura_tempo_sec) +5
+    lista_tempo_rupturas.append((inicio_video,final_video))
 
     #Front DashBoard
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
