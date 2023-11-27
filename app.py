@@ -81,11 +81,13 @@ def converter_tempo_para_segundos(tempo_str):
 def trata_video(data_rupturas,click):
     
     df_rupturas = pd.DataFrame(data_rupturas)
-    lista_tempo_rupturas = []
+    dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
+    numero_ruptura = 1
     for ruptura_tempo_sec in df_rupturas["inicio_ruptura"]:
         inicio_video = converter_tempo_para_segundos(ruptura_tempo_sec) - 5
-        final_video = converter_tempo_para_segundos(ruptura_tempo_sec) +5
-    lista_tempo_rupturas.append((inicio_video,final_video))
+        final_video = converter_tempo_para_segundos(ruptura_tempo_sec) + 5
+        dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
+        numero_ruptura += 1
 
     #Front DashBoard
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
