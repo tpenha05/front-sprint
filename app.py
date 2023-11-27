@@ -55,6 +55,69 @@ def trata_dados(dados, time, id, tipo):
                 }
                 dicionario_rupturas.append(novo_registro)
                 # Agora dicionario_rupturas deve conter a lista desejada de dicionários
+            for i in range(len(dicionario_rupturas)):
+                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
+                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
+                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
+                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
+        #Desfechos Lista  
+        
+        total_desfechos = dados['time'][id]['desfechos']
+        df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
+        print(dicionario_rupturas)
+        df_rupturas = pd.DataFrame(dicionario_rupturas)
+        print(df_rupturas)
+        trata_video(df_rupturas)
+        df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
+        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
+        ######
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
+
+def converter_tempo_para_segundos(tempo_str):
+    if not tempo_str:
+        return None
+
+    horas, minutos, segundos = map(int, tempo_str.split(':'))
+
+    return horas * 3600 + minutos * 60 + segundos
+
+def trata_video(data_rupturas,click):
+    pass
+
+    #Front DashBoard
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
+    if st.button("Voltar"):
+        st.session_state['ir_para_analise'] = True
+        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("Geral")
+        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+        st.plotly_chart(fig)
+        st.dataframe(df_desfechos) 
+        
+    with col2:
+        st.dataframe(df_rupturas) 
+        pass
+
+
+def trata_dados(dados, time, id, tipo):
+    #jogadores numero de rupturas
+        dicionario_rupturas = [{}]
+        total_rupturas = {}
+        total_desfechos = {}
+        for ruptura in dados['time'][id]['rupturas']:
+            instante_ruptura = ruptura.get('instante_ruptura', None)
+            if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
+                novo_registro = {
+                    "instante_ruptura": instante_ruptura,
+                    "inicio_ruptura": ruptura.get('inicio_ruptura', None),
+                    'zona': ruptura.get('zona_defesa', None),
+                    'desfecho': ruptura.get('desfecho', None),
+                    'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
+                }
+                dicionario_rupturas.append(novo_registro)
+                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
                 print(dicionario_rupturas)
             for i in range(len(dicionario_rupturas)):
                 if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
