@@ -41,34 +41,51 @@ def main():
 def trata_dados(dados, time, id, tipo):
     #jogadores numero de rupturas
         dicionario_rupturas = [{}]
-        time = '1' #palmeiras
-        time2 = '5'#redbull 
-        for ruptura in dados['time'][time]['rupturas']:
-            for i in dicionario_rupturas.len():
+        total_rupturas = {}
+        total_desfechos = {}
+        for ruptura in dados['time'][id]['rupturas']:
+            instante_ruptura = ruptura.get('instante_ruptura', None)
+            if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
+                novo_registro = {
+                    "instante_ruptura": instante_ruptura,
+                    "inicio_ruptura": ruptura.get('inicio_ruptura', None),
+                    'zona': ruptura.get('zona_defesa', None),
+                    'desfecho': ruptura.get('desfecho', None),
+                    'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
+                }
+                dicionario_rupturas.append(novo_registro)
+                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
+                print(dicionario_rupturas)
+            for i in range(len(dicionario_rupturas)):
                 if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
-                  dicionario_rupturas[i] = {"instante_ruptura": ruptura['instante_ruptura'], "inicio_ruptura": ruptura['inicio_ruptura'], 'zona': ruptura['zona_defesa'], 'desfecho': ruptura['desfecho']}
-            data = dados['time']['1']['desfechos']
-            df = pd.DataFrame(list(data.items()), columns=['Coluna', 'Valores'])
-            df.head()
-            cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
-    #Jogadores envolvidos
+                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
+                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
+                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
+        #Desfechos Lista  
+        
+        total_desfechos = dados['time'][id]['desfechos']
+        df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
+        df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
+        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
+        ######
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
 
 
-        dashboard_quebra(df, cores_personalizadas, dicionario_rupturas)
     #Front DashBoard
-def dashboard_quebra(df_desfechos, cores_personalizadas, df_rupturas):
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
     if st.button("Voltar"):
         st.session_state['ir_para_analise'] = True
         # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
     col1, col2 = st.columns(2)
     with col1:
         st.header("Geral")
-        fig = px.pie(df_desfechos, values='Valores', names='Coluna', title='Gráfico de Pizza Interativo',color_discrete_sequence=cores_personalizadas)
+        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
         st.plotly_chart(fig)
-        st.dataframe(df_rupturas) 
+        st.dataframe(df_desfechos) 
+        
     with col2:
-        fig = px.bar(df_desfechos, x='Coluna', y='Valores', title='Gráfico de Barras Interativo',color_discrete_sequence=cores_personalizadas)
-        st.plotly_chart(fig)
+        st.dataframe(df_rupturas) 
+        pass
 
 def login_cadastro():
     st.title("Data Goal")
