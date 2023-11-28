@@ -1,11 +1,30 @@
-section.main.st-emotion-cache-uf99v8.ea3mdgi5 {
+/* section.main.st-emotion-cache-uf99v8.ea3mdgi5 {
     background-color: white;
     color: black;
-}
+} */
 
 h1{
     color: black; 
 }
+
+
+/* Definição para o fundo preto e texto branco na página */
+/* body {
+    background-color: white;
+    color: black;
+}
+
+/* Definição para as caixas de informações */
+/* div.st-expander.stEmotionContainer.e1oz9kzw0 {
+    background-color: white;
+    color: black;
+}
+
+Definição para o texto dentro das caixas de informações */ 
+div.st-expander.stEmotionContainer.e1oz9kzw0 div.st-emotion-cache-1d8jygy.e1oz9kzw1 {
+    color: black;
+}
+
 
 /* button{
     background-color: black;
@@ -41,3 +60,7 @@ div.st-de.st-df.st-dh.st-dg.st-f1.st-f2.st-b9.st-f3.st-ez, div.st-emotion-cache-
 /* div.st-emotion-cache-q8sbsg.e1nzilvr5{
     color: white
 } */
+
+div.st-emotion-cache-16idsys.e1nzilvr5{
+    color: white;
+}

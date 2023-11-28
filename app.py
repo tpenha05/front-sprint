@@ -128,6 +128,9 @@ def pagina_partidas(partidas):
     with open("design/style/partidas.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
+    with open("design/style/sidebar.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+
     if 'clube' in st.session_state:
         clube_usuario = st.session_state['clube']
         st.title(f"{clube_usuario}")
@@ -179,7 +182,7 @@ def paginas():
     with open("design/style/sidebar.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
-    sidebar_image = 'design/photos/logo_header.webp'  
+    sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
     st.sidebar.image(sidebar_image, width=200)
     st.sidebar.subheader("")
     opcoes = ["Partidas", "Rupturas", "Cruzamento"]
