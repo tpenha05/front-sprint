@@ -293,12 +293,19 @@ def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
     video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
 
 def video_teste():
-    st.title("colocando o video teste")
+    st.title("Colocando o vídeo teste")
 
-    video_file = open('videos_rupturas/ruptura_5.mp4', 'rb')
-    video_bytes = video_file.read()
+    rupturas_disponiveis = [1, 2, 3, 4, 5, 6, 7]  
+    escolha_ruptura = st.selectbox("Escolha o número da ruptura", rupturas_disponiveis)
 
-    st.video(video_bytes)
+    nome_arquivo = f"videos_rupturasPalmeirasxBragantino_12.12.12/ruptura_{escolha_ruptura}_videos_rupturasPalmeirasxBragantino_12.12.12.mp4"
+
+    if os.path.exists(nome_arquivo):
+        video_file = open(nome_arquivo, 'rb')
+        video_bytes = video_file.read()
+        st.video(video_bytes)
+    else:
+        st.error(f"O arquivo {nome_arquivo} não foi encontrado.")
 
 # Função principal para controlar a navegação entre as páginas
 def paginas():
