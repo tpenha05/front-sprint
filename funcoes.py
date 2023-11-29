@@ -20,7 +20,6 @@ def login(email, senha):
 
 def partidas():
     headers = {'usuario': id_user_atual}
-    st.write(headers)
     response =  requests.get(f"{url}/partidas", headers=headers)
     return  json.loads(response.text)
 

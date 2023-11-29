@@ -313,18 +313,18 @@ def paginas():
     opcoes = ["Partidas", "Rupturas", "Cruzamento", "Video_teste"]
     opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
-        # Carregando a página selecionada
-        if opcao_pagina == "Rupturas":
-            pagina_dados()
-        elif opcao_pagina == "Cruzamento":
-            pagina_configuracoes()
-        elif opcao_pagina == "Partidas":
-            dados_partidas = partidas()
-            pagina_partidas(dados_partidas)
-        elif opcao_pagina == "Video_teste":
-             video_teste()
-        else:
-          st.error("Página não encontrada.")
+    # Carregando a página selecionada
+    if opcao_pagina == "Rupturas":
+        pagina_dados()
+    elif opcao_pagina == "Cruzamento":
+        pagina_configuracoes()
+    elif opcao_pagina == "Partidas":
+        dados_partidas = partidas()
+        pagina_partidas(dados_partidas)
+    elif opcao_pagina == "Video_teste":
+            video_teste()
+    else:
+        st.error("Página não encontrada.")
 
 
 
