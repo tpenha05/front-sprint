@@ -1,3 +1,8 @@
+import streamlit as st
+import matplotlib.pyplot as plt
+import numpy as np
+
+
 def ataque(dic_do_cruzamento, dic_jogadores_ataque):
     jogadores_ataque = dic_do_cruzamento["nome_jogadores_time_cruzando"]
     lista_jogadores_ataque = jogadores_ataque.replace(" ", "").split(",")
@@ -72,3 +77,18 @@ def numero_defesa(dic_do_cruzamento, dic_jogadores_defesa):
         elif jogador in dic_jogadores_defesa:
             dic_jogadores_defesa[jogador] +=1
     return dic_jogadores_defesa
+
+
+def grafico_1(dicionario, time):
+    #grafico dos cruzamentos por camisa dos jogadores dos respectivos times
+    chaves = list(dicionario.keys())
+    valores = list(dicionario.values())
+    # Criando o gráfico de barras
+    fig, ax = plt.subplots()
+    ax.bar(chaves, valores)
+    # Definindo título e rótulos dos eixos
+    ax.set_title(f'Cruzamentos do {time}')
+    ax.set_xlabel('Número da camisa')
+    ax.set_ylabel('Contribuições em Cruzamentos')
+    # Mostrando o gráfico no Streamlit
+    st.pyplot(fig)
