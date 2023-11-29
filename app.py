@@ -270,16 +270,16 @@ def pagina_partidas(partidas):
             if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
                 st.session_state['ir_para_analise'] = True
 
-def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturas"):
+def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
     
     if not os.path.exists(pasta_saida):
-        os.makedirs(pasta_saida)
+        os.makedirs(f"{pasta_saida}")
 
     for numero_clipe, (inicio, fim) in tempos_clipes.items():
-        nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}.mp4")
+        nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}_{pasta_saida}.mp4")
 
         if not os.path.exists(nome_arquivo_saida):
-            print(f"Cortando clipe {numero_clipe}...")
+            print(f"Cortando clipe {numero_clipe}_{pasta_saida}...")
             cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida)
         else:
             print(f"Arquivo {nome_arquivo_saida} já existe. Pulando...")
