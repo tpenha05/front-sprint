@@ -1,6 +1,7 @@
 .sidebar{
     background-color: #292929;
     color: white;
+    position: fixed;
 }
 
 div.stSlider, div.st-e3.st-b9.st-ew{
@@ -12,11 +13,6 @@ section.main.st-emotion-cache-uf99v8.ea3mdgi5{
     background-color: white;
     color: black;
 }
-
-/* div.st-emotion-cache-1vzeuhh.ew7r33m3{
-    background-color: #292929;
-    color: black
-} */
 
 section.st-emotion-cache-vk3wp9.eczjsme11{
     background-color: #292929;

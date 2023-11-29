@@ -35,10 +35,6 @@ def main():
 
 def login_cadastro():
 
-    # header_image = 'design/photos/logo_header.webp'  
-    # st.image(header_image, width=700) 
-
-    # st.set_page_config(layout="wide")
     with open("design/style/login.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
@@ -47,49 +43,27 @@ def login_cadastro():
     with col1:
         image = Image.open('design/photos/logo.webp')
         st.image(image)
-        # st.subheader('Artificial Intelligence to monitor players every instant of every match')
 
 
     with col3:
-        # tab1, tab2 = st.tabs(["Login", "Sign Up"])
-        # with tab1:
-            st.header("Login")
-            email = st.text_input("E-mail:", key="login_email")
-            senha = st.text_input("Senha:", type='password', key="login_password")
+        st.header("Login")
+        email = st.text_input("E-mail:", key="login_email")
+        senha = st.text_input("Senha:", type='password', key="login_password")
+        
+        # Use uma chave diferente para o text_input e o session_state
+        clube_input = st.text_input("Clube:", key="clube_input")
+
+        if st.button("Login"):
+            if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
+                st.session_state['clube'] = clube_input
             
-            # Use uma chave diferente para o text_input e o session_state
-            clube_input = st.text_input("Clube:", key="clube_input")
-
-            if st.button("Login"):
-                if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
-                    st.session_state['clube'] = clube_input
-                
-                response = login(email, senha)
-                if response.ok:
-                    st.success("Login bem-sucedido!")
-                    st.session_state.usuario = email
-                    st.rerun()
-                else:
-                    st.error("Credenciais inválidas. Tente novamente.")
-
-        # with tab2:
-        #     st.header("Sign Up")
-        #     new_email = st.text_input("E-mail:", key="new_email")
-        #     new_password = st.text_input("Senha:", type='password', key="new_password")
-        #     new_time = st.text_input("Clube:", key="new_time")
-
-        #     if st.button("Sign Up"):
-        #         response = cadastra_usuario(new_email, new_password, new_time)
-        #         if response.ok:
-        #             st.success("Usuário cadastrado com sucesso!")
-        #         else:
-        #             st.error(response.text)
-
-
-# Função para exibir a página inicial
-# def pagina_inicial():
-#     st.title("Página Inicial")
-#     st.write("Bem-vindo à página inicial. Selecione uma opção na barra lateral para navegar.")
+            response = login(email, senha)
+            if response.ok:
+                st.success("Login bem-sucedido!")
+                st.session_state.usuario = email
+                st.rerun()
+            else:
+                st.error("Credenciais inválidas. Tente novamente.")
 
 # Função para exibir a página de visualização de dados
 def pagina_dados():
@@ -144,8 +118,8 @@ def pagina_partidas(partidas):
     df_partidas = pd.DataFrame(partidas)
     df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
-    adversarios = ["Todos"] + sorted(df_partidas['adversario'].unique().tolist())
-    adversario_selecionado = st.selectbox("Selecionar adversário:", adversarios)
+    adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
+    adversario_selecionado = st.selectbox("", adversarios)
     min_data, max_data = df_partidas['data'].min(), df_partidas['data'].max()
     data_inicial, data_final = st.slider(
         "",
@@ -158,7 +132,7 @@ def pagina_partidas(partidas):
     st.subheader("Partidas")
 
     df_filtrado = df_partidas.copy()
-    if adversario_selecionado != "Todos":
+    if adversario_selecionado != "Todos os Adversários":
         df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
     df_filtrado = df_filtrado[(df_filtrado['data'] >= data_inicial) & (df_filtrado['data'] <= data_final)]
 
@@ -179,15 +153,10 @@ def dashboard_analise():
     
 # Função principal para controlar a navegação entre as páginas
 def paginas():
-    with open("design/style/sidebar.css") as d:
-        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-
     sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
     st.sidebar.image(sidebar_image, width=200)
     st.sidebar.subheader("")
     opcoes = ["Partidas", "Rupturas", "Cruzamento"]
-    # image = Image.open('design/photos/logo_header.webp')
-    # st.image(image)
     opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
     # Condicional para 'Página de Análise'
@@ -195,8 +164,6 @@ def paginas():
         dashboard_analise()
     else:
         # Carregando a página selecionada
-        # if opcao_pagina == "Página Inicial":
-        #     pagina_inicial()
         if opcao_pagina == "Rupturas":
             pagina_dados()
         elif opcao_pagina == "Cruzamento":

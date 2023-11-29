@@ -1,76 +1,40 @@
-/* section.main.st-emotion-cache-uf99v8.ea3mdgi5 {
-    background-color: white;
-    color: black;
-} */
+header{
+    background-color: black;
+    color: white;
+}
 
 h1{
     color: black; 
 }
 
 
-/* Definição para o fundo preto e texto branco na página */
-/* body {
-    background-color: white;
-    color: black;
-}
-
-/* Definição para as caixas de informações */
-/* div.st-expander.stEmotionContainer.e1oz9kzw0 {
-    background-color: white;
-    color: black;
-}
-
-Definição para o texto dentro das caixas de informações */ 
 div.st-expander.stEmotionContainer.e1oz9kzw0 div.st-emotion-cache-1d8jygy.e1oz9kzw1 {
     color: black;
 }
 
-
-/* button{
-    background-color: black;
-    color: white;
-}
-
-p{
-    color:white ;
-} */
 
 button.st-emotion-cache-19rxjzo.ef3psqc12{
     background-color: black;
     color: white;
 }
 
-/* 
-div.st-be.st-e5.st-ec.st-ed.st-ee.st-b4.st-cm.st-ef.st-bf.st-cd.st-ce.st-cf.st-cg{
-    background-color: black;
-    color: white;
-} */
-
-/* div.st-de.st-df.st-dh.st-dg.st-f1.st-f2.st-b9.st-f3.st-ez{
-    color:black
-}
 
 span{
     color:black
-} */    
-
-/* div.st-de.st-df.st-dh.st-dg.st-f1.st-f2.st-b9.st-f3.st-ez, div.st-emotion-cache-q8sbsg.e1nzilvr5, span{
-    color:black
-} */
-
-/* div.st-emotion-cache-q8sbsg.e1nzilvr5{
-    color: white
-} */
+}    
 
 div.st-emotion-cache-16idsys.e1nzilvr5{
     color: white;
 }
 
 div.block-container.st-emotion-cache-1y4p8pa.ea3mdgi4{
-    padding: 0px;
+    padding: 2%;
 }
 
 button.st-emotion-cache-7ym5gk.ef3psqc12{
     background-color: black;
 }
 
+button.st-emotion-cache-ch5dnh.ef3psqc5, button.st-emotion-cache-6q9sum.ef3psqc4{
+    color: white;
+}
