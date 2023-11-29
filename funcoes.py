@@ -14,16 +14,21 @@ def cadastra_usuario(email, senha, time):
 def login(email, senha):
     payload = {"email": email, "senha": senha}
     response = requests.post(f"{url}/login", json=payload)
+    global id_user_atual
+    id_user_atual = str(response.headers['usuario'])
     return response
 
 def partidas():
-    response = requests.get(f"{url}/partidas")
-    return json.loads(response.text)
+    headers = {'usuario': id_user_atual}
+    st.write(headers)
+    response =  requests.get(f"{url}/partidas", headers=headers)
+    return  json.loads(response.text)
 
 
 def obter_clube_usuario():
     try:
-        response = requests.get(f"{url}/get_clube")
+        header = {'usuario': id_user_atual}
+        response = requests.get(f"{url}/get_clube",headers=header)
         response.raise_for_status()
         return response.json()['clube']
     except requests.RequestException as e:

@@ -253,8 +253,9 @@ def pagina_partidas(partidas):
         st.write(f"O clube do usuário é: {clube_usuario}")
     else:
         st.write("Clube não definido ou não informado.")
-   
-    df_partidas = pd.DataFrame(partidas)
+    
+    partidas_dic = partidas['partidas'][0]
+    df_partidas = pd.DataFrame(partidas_dic)
     df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
     adversarios = ["Todos"] + sorted(df_partidas['adversario'].unique().tolist())
