@@ -188,7 +188,7 @@ def paginas():
     opcoes = ["Partidas", "Rupturas", "Cruzamento"]
     # image = Image.open('design/photos/logo_header.webp')
     # st.image(image)
-    opcao_pagina = st.sidebar.radio("Menu", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
+    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
     # Condicional para 'Página de Análise'
     if st.session_state.get('opcao_pagina') == "Página de Análise":
