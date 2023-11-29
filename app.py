@@ -3,7 +3,10 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 from funcoes import *
-from controle_geral import pag_adm
+from dashboard import *
+from moviepy.editor import VideoFileClip
+import os 
+from PIL import Image
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -29,17 +32,146 @@ def main():
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
         st.session_state['ir_para_analise'] = False
-        dashboard_analise()
+        with open('dados/quebra.json', 'r') as f:
+            data = json.load(f)
+            time = 'Palmeiras'
+            id = '1'
+        trata_dados(data, time, id, 'quebra')
     else:
         paginas()
 
+
+def trata_dados(dados, time, id, tipo):
+    #jogadores numero de rupturas
+        dicionario_rupturas = [{}]
+        total_rupturas = {}
+        total_desfechos = {}
+        for ruptura in dados['time'][id]['rupturas']:
+            instante_ruptura = ruptura.get('instante_ruptura', None)
+            if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
+                novo_registro = {
+                    "instante_ruptura": instante_ruptura,
+                    "inicio_ruptura": ruptura.get('inicio_ruptura', None),
+                    'zona': ruptura.get('zona_defesa', None),
+                    'desfecho': ruptura.get('desfecho', None),
+                    'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
+                }
+                dicionario_rupturas.append(novo_registro)
+                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
+            for i in range(len(dicionario_rupturas)):
+                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
+                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
+                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
+                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
+        #Desfechos Lista  
+        
+        total_desfechos = dados['time'][id]['desfechos']
+        df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
+        trata_video(dicionario_rupturas)
+        df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
+        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
+        ######
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
+
+def converter_tempo_para_segundos(tempo_str):
+    if not tempo_str:
+        return None
+
+    horas, minutos, segundos = map(int, tempo_str.split(':'))
+
+    return horas * 3600 + minutos * 60 + segundos
+
+def trata_video(data_rupturas,click):
+    
+    df_rupturas = pd.DataFrame(data_rupturas)
+    dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
+    numero_ruptura = 1
+    for ruptura_tempo_sec in df_rupturas["inicio_ruptura"]:
+        inicio_video = converter_tempo_para_segundos(ruptura_tempo_sec) - 5
+        final_video = converter_tempo_para_segundos(ruptura_tempo_sec) + 5
+        dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
+        numero_ruptura += 1
+
+    #Front DashBoard
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
+    if st.button("Voltar"):
+        st.session_state['ir_para_analise'] = True
+        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("Geral")
+        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+        st.plotly_chart(fig)
+        st.dataframe(df_desfechos) 
+        
+    with col2:
+        st.dataframe(df_rupturas) 
+        pass
+
+
+def trata_dados(dados, time, id, tipo):
+    #jogadores numero de rupturas
+        dicionario_rupturas = [{}]
+        total_rupturas = {}
+        total_desfechos = {}
+        for ruptura in dados['time'][id]['rupturas']:
+            instante_ruptura = ruptura.get('instante_ruptura', None)
+            if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
+                novo_registro = {
+                    "instante_ruptura": instante_ruptura,
+                    "inicio_ruptura": ruptura.get('inicio_ruptura', None),
+                    'zona': ruptura.get('zona_defesa', None),
+                    'desfecho': ruptura.get('desfecho', None),
+                    'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
+                }
+                dicionario_rupturas.append(novo_registro)
+                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
+                print(dicionario_rupturas)
+            for i in range(len(dicionario_rupturas)):
+                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
+                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
+                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
+                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
+        #Desfechos Lista  
+        
+        total_desfechos = dados['time'][id]['desfechos']
+        df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
+        df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
+        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
+        ######
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
+
+
+    #Front DashBoard
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
+    if st.button("Voltar"):
+        st.session_state['ir_para_analise'] = True
+        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("Geral")
+        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+        st.plotly_chart(fig)
+        st.dataframe(df_desfechos) 
+        
+    with col2:
+        st.dataframe(df_rupturas) 
+        pass
+
 def login_cadastro():
-    st.title("Data Goal")
 
-    tab1, tab2 = st.tabs(["Login", "Cadastrar"])
+    with open("design/style/login.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
-    with tab1:
-        st.header("Faça login")
+    col1, col2, col3 = st.columns([2,1,2])
+
+    with col1:
+        image = Image.open('design/photos/logo.webp')
+        st.image(image)
+
+
+    with col3:
+        st.header("Login")
         email = st.text_input("E-mail:", key="login_email")
         senha = st.text_input("Senha:", type='password', key="login_password")
         
@@ -57,25 +189,6 @@ def login_cadastro():
                 st.rerun()
             else:
                 st.error("Credenciais inválidas. Tente novamente.")
-
-    with tab2:
-        st.header("Cadastrar novo usuário")
-        new_email = st.text_input("E-mail:", key="new_email")
-        new_password = st.text_input("Nova senha:", type='password', key="new_password")
-        new_time = st.text_input("Time", key="new_time")
-
-        if st.button("Cadastrar"):
-            response = cadastra_usuario(new_email, new_password, new_time)
-            if response.ok:
-                st.success("Usuário cadastrado com sucesso!")
-            else:
-                st.error(response.text)
-
-
-# Função para exibir a página inicial
-def pagina_inicial():
-    st.title("Página Inicial")
-    st.write("Bem-vindo à página inicial. Selecione uma opção na barra lateral para navegar.")
 
 # Função para exibir a página de visualização de dados
 def pagina_dados():
@@ -110,31 +223,40 @@ def pagina_configuracoes():
     # Adicione configurações ou opções aqui
 
 def pagina_partidas(partidas):
-    st.title(f"Partidas")
+
+    with open("design/style/partidas.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+
+    with open("design/style/sidebar.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
     if 'clube' in st.session_state:
         clube_usuario = st.session_state['clube']
-        st.write(f"O clube do usuário é: {clube_usuario}")
+        st.title(f"{clube_usuario}")
     else:
+        st.title(f"Partidas")
         st.write("Clube não definido ou não informado.")
-   
-    df_partidas = pd.DataFrame(partidas)
+
+    st.subheader("Filtro") 
+    partidas_dic = partidas['partidas'][0]
+    df_partidas = pd.DataFrame(partidas_dic)
     df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
-    adversarios = ["Todos"] + sorted(df_partidas['adversario'].unique().tolist())
-    adversario_selecionado = st.selectbox("Selecione o Adversário", adversarios)
-
+    adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
+    adversario_selecionado = st.selectbox("", adversarios)
     min_data, max_data = df_partidas['data'].min(), df_partidas['data'].max()
     data_inicial, data_final = st.slider(
-        "Selecione o Intervalo de Datas",
+        "",
         min_value=min_data,
         max_value=max_data,
         value=(min_data, max_data),
         format="DD/MM/YYYY"
     )
 
+    st.subheader("Partidas")
+
     df_filtrado = df_partidas.copy()
-    if adversario_selecionado != "Todos":
+    if adversario_selecionado != "Todos os Adversários":
         df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
     df_filtrado = df_filtrado[(df_filtrado['data'] >= data_inicial) & (df_filtrado['data'] <= data_final)]
 
@@ -146,39 +268,63 @@ def pagina_partidas(partidas):
             if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
                 st.session_state['ir_para_analise'] = True
 
-def dashboard_analise():
-    st.title("Dashboard")
-
-    if st.button("Voltar para Análises de Jogos"):
-        st.session_state['opcao_pagina'] = "Partidas" 
-        st.experimental_rerun()
+def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
     
+    if not os.path.exists(pasta_saida):
+        os.makedirs(f"{pasta_saida}")
+
+    for numero_clipe, (inicio, fim) in tempos_clipes.items():
+        nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}_{pasta_saida}.mp4")
+
+        if not os.path.exists(nome_arquivo_saida):
+            print(f"Cortando clipe {numero_clipe}_{pasta_saida}...")
+            cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida)
+        else:
+            print(f"Arquivo {nome_arquivo_saida} já existe. Pulando...")
+
+def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
+
+    video = VideoFileClip(arquivo_video)
+
+    video_cortado = video.subclip(inicio, fim)
+
+    video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
+
+def video_teste():
+    st.title("Colocando o vídeo teste")
+
+    rupturas_disponiveis = [1, 2, 3, 4, 5, 6, 7]  
+    escolha_ruptura = st.selectbox("Escolha o número da ruptura", rupturas_disponiveis)
+
+    nome_arquivo = f"videos_rupturasPalmeirasxBragantino_12.12.12/ruptura_{escolha_ruptura}_videos_rupturasPalmeirasxBragantino_12.12.12.mp4"
+
+    if os.path.exists(nome_arquivo):
+        video_file = open(nome_arquivo, 'rb')
+        video_bytes = video_file.read()
+        st.video(video_bytes)
+    else:
+        st.error(f"O arquivo {nome_arquivo} não foi encontrado.")
+
 # Função principal para controlar a navegação entre as páginas
 def paginas():
+    sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
+    st.sidebar.image(sidebar_image, width=200)
+    st.sidebar.subheader("")
+    opcoes = ["Partidas", "Rupturas", "Cruzamento", "Video_teste"]
+    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
-    clube = st.session_state['clube']
-
-    if clube == "admin":
-        pag_adm()
-
-    else:    
-        st.sidebar.title("Dashboard")
-        opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"]
-        opcao_pagina = st.sidebar.radio("Escolha a Página:", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Página Inicial')))
-        # Condicional para 'Página de Análise'
-        if st.session_state.get('opcao_pagina') == "Página de Análise":
-            dashboard_analise()
-        else:
-            # Carregando a página selecionada
-            if opcao_pagina == "Página Inicial":
-                pagina_inicial()
-            elif opcao_pagina == "Quebra de linha de defesa":
-                pagina_dados()
-            elif opcao_pagina == "Cruzamento":
-                pagina_configuracoes()
-            elif opcao_pagina == "Partidas":
-                dados_partidas = partidas()
-                pagina_partidas(dados_partidas)
+    # Carregando a página selecionada
+    if opcao_pagina == "Rupturas":
+        pagina_dados()
+    elif opcao_pagina == "Cruzamento":
+        pagina_configuracoes()
+    elif opcao_pagina == "Partidas":
+        dados_partidas = partidas()
+        pagina_partidas(dados_partidas)
+    elif opcao_pagina == "Video_teste":
+            video_teste()
+    else:
+        st.error("Página não encontrada.")
 
 
 
