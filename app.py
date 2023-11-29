@@ -4,6 +4,8 @@ import plotly.express as px
 from datetime import datetime
 from funcoes import *
 from dashboard import *
+from moviepy.editor import VideoFileClip
+import os 
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -268,11 +270,40 @@ def pagina_partidas(partidas):
             if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
                 st.session_state['ir_para_analise'] = True
 
+def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturas"):
     
+    if not os.path.exists(pasta_saida):
+        os.makedirs(pasta_saida)
+
+    for numero_clipe, (inicio, fim) in tempos_clipes.items():
+        nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}.mp4")
+
+        if not os.path.exists(nome_arquivo_saida):
+            print(f"Cortando clipe {numero_clipe}...")
+            cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida)
+        else:
+            print(f"Arquivo {nome_arquivo_saida} já existe. Pulando...")
+
+def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
+
+    video = VideoFileClip(arquivo_video)
+
+    video_cortado = video.subclip(inicio, fim)
+
+    video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
+
+def video_teste():
+    st.title("colocando o video teste")
+
+    video_file = open('videos_rupturas/ruptura_5.mp4', 'rb')
+    video_bytes = video_file.read()
+
+    st.video(video_bytes)
+
 # Função principal para controlar a navegação entre as páginas
 def paginas():
     st.sidebar.title("Dashboard")
-    opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas"]
+    opcoes = ["Página Inicial", "Quebra de linha de defesa", "Cruzamento", "Partidas", "Video_teste"]
     opcao_pagina = st.sidebar.radio("Escolha a Página:", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Página Inicial')))
 
         # Carregando a página selecionada
@@ -285,10 +316,10 @@ def paginas():
     elif opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)
+    elif opcao_pagina == "Video_teste":
+        video_teste()
     else:
         st.error("Página não encontrada.")
-
-
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
