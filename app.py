@@ -7,6 +7,7 @@ from dashboard import *
 from moviepy.editor import VideoFileClip
 import os 
 from PIL import Image
+from datetime import date
 
 # Dados de exemplo para autenticação
 usuarios_cadastrados = {
@@ -244,7 +245,7 @@ def pagina_partidas(partidas):
 
     adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
     adversario_selecionado = st.selectbox("", adversarios)
-    min_data, max_data = df_partidas['data'].min(), df_partidas['data'].max()
+    min_data, max_data = df_partidas['data'].min(), date.today()
     data_inicial, data_final = st.slider(
         "",
         min_value=min_data,
