@@ -9,22 +9,6 @@ import os
 from PIL import Image
 
 # Dados de exemplo para autenticação
-usuarios_cadastrados = {
-    'usuario1': 'senha123',
-    'usuario2': 'senha456',
-    '1':'1'
-}
-
-# Função para verificar as credenciais
-def verifica_credenciais(username, senha):
-    return usuarios_cadastrados.get(username) == senha
-
-# Função para adicionar novos usuários
-def adicionar_usuario(username, senha):
-    if username not in usuarios_cadastrados:
-        usuarios_cadastrados[username] = senha
-        return True
-    return False
 
 # Função principal para o aplicativo
 def main():
@@ -41,37 +25,6 @@ def main():
         paginas()
 
 
-def trata_dados(dados, time, id, tipo):
-    #jogadores numero de rupturas
-        dicionario_rupturas = [{}]
-        total_rupturas = {}
-        total_desfechos = {}
-        for ruptura in dados['time'][id]['rupturas']:
-            instante_ruptura = ruptura.get('instante_ruptura', None)
-            if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
-                novo_registro = {
-                    "instante_ruptura": instante_ruptura,
-                    "inicio_ruptura": ruptura.get('inicio_ruptura', None),
-                    'zona': ruptura.get('zona_defesa', None),
-                    'desfecho': ruptura.get('desfecho', None),
-                    'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
-                }
-                dicionario_rupturas.append(novo_registro)
-                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
-            for i in range(len(dicionario_rupturas)):
-                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
-                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
-                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
-                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
-        #Desfechos Lista  
-        
-        total_desfechos = dados['time'][id]['desfechos']
-        df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
-        trata_video(dicionario_rupturas)
-        df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
-        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
-        ######
-        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
 
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
@@ -107,40 +60,6 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     with col2:
         st.dataframe(df_rupturas) 
         pass
-
-
-def trata_dados(dados, time, id, tipo):
-    #jogadores numero de rupturas
-        dicionario_rupturas = [{}]
-        total_rupturas = {}
-        total_desfechos = {}
-        for ruptura in dados['time'][id]['rupturas']:
-            instante_ruptura = ruptura.get('instante_ruptura', None)
-            if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
-                novo_registro = {
-                    "instante_ruptura": instante_ruptura,
-                    "inicio_ruptura": ruptura.get('inicio_ruptura', None),
-                    'zona': ruptura.get('zona_defesa', None),
-                    'desfecho': ruptura.get('desfecho', None),
-                    'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
-                }
-                dicionario_rupturas.append(novo_registro)
-                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
-                print(dicionario_rupturas)
-            for i in range(len(dicionario_rupturas)):
-                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
-                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
-                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
-                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
-        #Desfechos Lista  
-        
-        total_desfechos = dados['time'][id]['desfechos']
-        df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
-        df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
-        cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
-        ######
-        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
-
 
     #Front DashBoard
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
