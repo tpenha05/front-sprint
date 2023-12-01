@@ -21,19 +21,20 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     # Desenhando o campo de futebol
     retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='green', facecolor='none')
 
-    # Adicionando o retângulo abrangendo os quadrados (x1, y3), (x1, y4), (x2, y3) e (x2, y4)
     largura_quad = largura_campo / 9
     altura_quad = altura_campo / 6
+
+    # Adicionando o retângulo abrangendo os quadrados (x1, y3), (x1, y4), (x2, y3) e (x2, y4)
     retangulo_destaque = patches.Rectangle((largura_quad * 0, altura_quad * 2), largura_quad * (1 - 0 + 1), altura_quad * (3 - 2 + 1), linewidth=1, edgecolor='red', facecolor='none')
+    retangulo_destaque.set_facecolor('red')
+    plt.text(8, 28, "Área", fontsize=10, color='White') #cor da escrita "Área"
     ax.add_patch(retangulo_destaque)
-    ax.add_patch(retangulo_campo)
 
-    # #area outro lado
-    # retangulo_destaque = faz_quadrado(largura_campo,altura_campo,x8,x9,y3,y4)
+    # #area outro lado B
     retangulo_destaque = patches.Rectangle((largura_quad * 7, altura_quad * 2), largura_quad * (8 - 7 + 1), altura_quad * (3 - 2 + 1), linewidth=1, edgecolor='red', facecolor='none')
-
+    retangulo_destaque.set_facecolor('red')
+    plt.text(86, 28, "Área", fontsize=10, color='white') #cor da escrita "Área"
     ax.add_patch(retangulo_destaque)
-    ax.add_patch(retangulo_campo)
 
     #quadrados do Campo, Lado A
     for parte in lado_a:
@@ -47,102 +48,15 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
         ax.add_patch(retangulo_destaque)
         ax.add_patch(retangulo_campo)
     
-    # Adicionando informações
-    plt.text(8, 28, "Área", fontsize=10, color='blue')
-    plt.text(86, 28, "Área", fontsize=10, color='blue')
+    for chave in escrita_a.keys():
+        plt.text(escrita_a[chave][0],escrita_a[chave][1],chave,fontsize=10, color='blue')
+        porcentagem = porcentagem_pal[chave]
+        plt.text(escrita_a[chave][2],escrita_a[chave][3],f"{porcentagem: .2f}%", fontsize=10, color='black')
 
-
-
-    
-    #E2.2
-    plt.text(3, 6, "E2.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["E2.2"]
-    plt.text(0.5, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #E2.1
-    plt.text(14, 6, "E2.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["E2.1"]
-    plt.text(12.5, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    E1.2
-    plt.text(25.5, 6, "E1.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["E1.2"]
-    plt.text(24, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    E1.1
-    plt.text(25.5, 20, "E1.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["E1.1"]
-    plt.text(24, 16, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #E3
-    plt.text(9, 16, "E3", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["E3"]
-    plt.text(6.5, 12, f"{porcentagem: .2f}%", fontsize=10, color='black')
-
-    #areas D
-    #D2.2
-    plt.text(3, 55, "D2.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["D2.2"]
-    plt.text(0.5, 51, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D2.1
-    plt.text(14, 55, "D2.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["D2.1"]
-    plt.text(12.5, 51, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D1.2
-    plt.text(25.5, 55, "D1.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["D1.2"]
-    plt.text(24, 51, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D1.1
-    plt.text(25.5, 40, "D1.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["D1.1"]
-    plt.text(24, 36, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D3
-    plt.text(9, 46, "D3", fontsize=10, color='blue')
-    porcentagem  = porcentagem_pal["D3"]
-    plt.text(6.5, 42, f"{porcentagem: .2f}%", fontsize=10, color='black')
-
-
-    #escrever o Nome da Área e B porcentagem
-    #E2.2
-    plt.text(92, 55, "E2.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["E2.2"]
-    plt.text(89.5, 51, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #E2.1
-    plt.text(80, 55, "E2.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["E2.1"]
-    plt.text(78.5, 51, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #E1.2
-    plt.text(70, 55, "E1.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["E1.2"]
-    plt.text(68, 51, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #E1.1
-    plt.text(70, 40, "E1.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["E1.1"]
-    plt.text(67.5, 36, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #E3
-    plt.text(86, 46, "E3", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["E3"]
-    plt.text(84.5, 42, f"{porcentagem: .2f}%", fontsize=10, color='black')
-
-    #areas D
-    #D2.2
-    plt.text(93, 6, "D2.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["D2.2"]
-    plt.text(89.5, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D2.1
-    plt.text(80, 6, "D2.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["D2.1"]
-    plt.text(78.5, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D1.2
-    plt.text(70, 6, "D1.2", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["D1.2"]
-    plt.text(68.5, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D1.1
-    plt.text(70, 20, "D1.1", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["D1.1"]
-    plt.text(67.5, 16, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    #D3
-    plt.text(86, 16, "D3", fontsize=10, color='blue')
-    porcentagem  = porcentagem_adv["D3"]
-    plt.text(84.5, 12, f"{porcentagem: .2f}%", fontsize=10, color='black')
-
-
+    for chave in escrita_b.keys():
+        plt.text(escrita_b[chave][0],escrita_b[chave][1],chave,fontsize=10, color='blue')
+        porcentagem = porcentagem_adv[chave]
+        plt.text(escrita_b[chave][2],escrita_b[chave][3],f"{porcentagem: .2f}%", fontsize=10, color='black')
 
     # Configurações do gráfico
     plt.xlim(-5, largura_campo + 5)

@@ -4,7 +4,6 @@ import numpy as np
 
 
 
-
 #grafico dos cruzamentos por camisa dos jogadores dos respectivos times
 def grafico_cruza_camisa(aparicoes_ataque, nome):
     chaves = list(aparicoes_ataque.keys())
@@ -39,7 +38,7 @@ def grafico_frequencia(dic_porcentagens, time):
     ax.pie(dic_porcentagens.values(), labels=dic_porcentagens.keys(), autopct='%1.1f%%', startangle=90)
     ax.axis('equal')  # Mantém o aspecto circular do gráfico
     # Definindo título
-    ax.set_title(f'Distribuição em porcentagem {time}')
+    ax.set_title(f'Desfechos dos Cruzamentos {time}')
     # Mostrando o gráfico no Streamlit
     return st.pyplot(fig)
 
