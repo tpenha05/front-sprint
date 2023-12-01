@@ -15,8 +15,6 @@ from datetime import date
 def main():
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
         login_cadastro()
-    elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
-        st.session_state['ir_para_analise'] = False
     else:
         paginas()
 
@@ -44,7 +42,7 @@ def trata_video(data_rupturas,click):
     #Front DashBoard
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
     if st.button("Voltar"):
-        st.session_state['ir_para_analise'] = True
+        paginas('Partidas')
         # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
     col1, col2 = st.columns(2)
     with col1:
@@ -167,10 +165,7 @@ def pagina_partidas(partidas):
             if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
                 st.session_state['ir_para_analise'] = True
                 resultado = dados(partida['clube'], partida['adversario'], partida['data'].strftime('%d/%m/%Y'))
-                print('CINECI',resultado[0], ' AQUI')
                 df = pd.DataFrame(resultado[0])
-                print(df)
-                dashboard_quebra(None, df, resultado[1], resultado[2])
 def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
     
     if not os.path.exists(pasta_saida):
@@ -209,16 +204,18 @@ def video_teste():
         st.error(f"O arquivo {nome_arquivo} não foi encontrado.")
 
 # Função principal para controlar a navegação entre as páginas
-def paginas():
+def paginas(opcao=None):
+    opcao_pagina = opcao
     sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
     st.sidebar.image(sidebar_image, width=200)
     st.sidebar.subheader("")
-    opcoes = ["Partidas", "Rupturas", "Cruzamento", "Video_teste"]
-    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
+    opcoes = ["Partidas", "Rupturas", "Cruzamento", "Video_teste", "DashBoard"]
+    
+    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')), key="pagina_radio")
 
     # Carregando a página selecionada
     if opcao_pagina == "Rupturas":
-        pagina_dados()
+        pass
     elif opcao_pagina == "Cruzamento":
         pagina_configuracoes()
     elif opcao_pagina == "Partidas":
@@ -226,6 +223,8 @@ def paginas():
         pagina_partidas(dados_partidas)
     elif opcao_pagina == "Video_teste":
             video_teste()
+    elif opcao_pagina == "DashBoard":
+        pass
     else:
         st.error("Página não encontrada.")
 
