@@ -47,7 +47,6 @@ destaques_adv = dict(sorted(aparicoes_adversario_ataque.items(), key=lambda item
 #porcentagem por zona (frequência)
 porcentagem_pal = porcentagem_zona(palmeiras_cruzamentos, len(palmeiras_cruzamentos))
 porcentagem_adv = porcentagem_zona(adversario_cruzamentos, len(adversario_cruzamentos))
-# print(porcentagem_adv, porcentagem_pal)
 
 
 #Busca zona da jogada.
@@ -62,3 +61,28 @@ print(tempo)
 #Pega os desfechos dos cruzamentos
 desfechos_pal = calcula_desfecho(palmeiras_cruzamentos)
 desfechos_adv = calcula_desfecho(adversario_cruzamentos)
+
+
+
+# Dicionario contendo valores (feitos a mão) para desenhar o campo
+lado_a = {"D1.1": [2,2,3,4],
+            "D1.2": [2,2,5,5],
+            "D2.1": [1,1,5,5],
+            "D2.2": [0,0,5,5],
+            "D3": [0,1,4,4],
+            "E1.1": [2,2,1,2],
+            "E1.2": [2,2,0,0],
+            "E2.1": [1,1,0,0],
+            "E2.2": [0,0,0,0],
+            "E3": [0,1,1,1]
+}
+lado_b = {"D1.1": [6,6,1,2],
+            "D1.2": [6,6,0,0],
+            "D2.1": [7,7,0,0],
+            "D2.2": [8,8,0,0],
+            "D3": [7,8,1,1],
+            "E1.1": [6,6,3,4],
+            "E1.2": [6,6,5,5],
+            "E2.1": [7,7,5,5],
+            "E2.2": [8,8,5,5],
+            "E3": [7,8,4,4]}

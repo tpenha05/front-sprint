@@ -3,6 +3,8 @@ import streamlit as st
 from geral import *
 from collections import OrderedDict
 from graficos_cruzamentos import * 
+from tentativa_campo import * 
+from metade_campo import *
 
 st.set_page_config(layout="wide")
 
@@ -10,12 +12,13 @@ st.title("CRUZAMENTOS")
 col1, col2 = st.columns(2)
 with col1:
     with st.container():
-        col_grafico, col_grafico_adv = st.columns(2)
-        with col_grafico:
-            grafico_frequencia(porcentagem_pal, nome_palmeiras)
+        st.pyplot(desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv))
+        # col_grafico, col_grafico_adv = st.columns(2)
+        # with col_grafico:
+        #     grafico_frequencia(porcentagem_pal, nome_palmeiras)
         
-        with col_grafico_adv:
-            grafico_frequencia(porcentagem_adv, nome_adversario)
+        # with col_grafico_adv:
+        #     grafico_frequencia(porcentagem_adv, nome_adversario)
 
     st.write("---")
     with st.container():
@@ -51,6 +54,10 @@ with col2:
     st.write("---")
 
     with st.container():
+        desfecho = palmeiras_cruzamentos[id]["desfecho"]
+        tempo_de_jogo = palmeiras_cruzamentos[id]["instante_cruzamento"]
+        st.markdown(f"**Desfecho:** {desfecho}")
+        st.markdown(f"**Tempo de jogo:** {tempo_de_jogo}")
         st.markdown(f"aqui o video do cruzamento {id +1 }")
     st.write("---")
 
@@ -60,17 +67,19 @@ with col2:
 
         with coluna1:
             #jogadores ataque
-            st.write("Jogadores Ataque:")
+            st.write("**Jogadores Ataque:**")
             for jogador in jogadores_ataque(palmeiras_cruzamentos[id]):
                 st.markdown(f"{jogador}")
 
         with coluna2:
             #jogadores Defesa
-            st.write("Jogadores Defesa:")
+            st.write("**Jogadores Defesa:**")
             for jogador in jogadores_defesa(palmeiras_cruzamentos[id]):
                 st.markdown(f"{jogador}")
 
         with coluna3:
             #lugar do Campo.
-            st.write("zona")
-            st.markdown(busca_zona(palmeiras_cruzamentos[id]))
+            st.markdown("**Zona do Campo**")
+            zona = palmeiras_cruzamentos[id]["zona"]
+            figura_cortada = desenho_zona(zona)
+            st.image(figura_cortada, use_column_width=True)

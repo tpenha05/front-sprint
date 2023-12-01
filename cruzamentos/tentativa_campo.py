@@ -13,6 +13,28 @@ def faz_quadrado(largura_campo,altura_campo,lista):
 # Função para desenhar o campo de futebol com um quadrado abrangendo os quadrados selecionados
 def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b):
     fig, ax = plt.subplots(figsize=(8, 5))
+   
+    lado_a = {"D1.1": [2,2,3,4],
+              "D1.2": [2,2,5,5],
+              "D2.1": [1,1,5,5],
+              "D2.2": [0,0,5,5],
+              "D3": [0,1,4,4],
+              "E1.1": [2,2,1,2],
+              "E1.2": [2,2,0,0],
+              "E2.1": [1,1,0,0],
+              "E2.2": [0,0,0,0],
+              "E3": [0,1,1,1]
+}
+    lado_b = {"D1.1": [6,6,1,2],
+              "D1.2": [6,6,0,0],
+              "D2.1": [7,7,0,0],
+              "D2.2": [8,8,0,0],
+              "D3": [7,8,1,1],
+              "E1.1": [6,6,3,4],
+              "E1.2": [6,6,5,5],
+              "E2.1": [7,7,5,5],
+              "E2.2": [8,8,5,5],
+              "E3": [7,8,4,4]}
 
     # Definindo o tamanho do campo
     largura_campo = 100
@@ -21,39 +43,33 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     # Desenhando o campo de futebol
     retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='green', facecolor='none')
 
-    # Adicionando o retângulo abrangendo os quadrados (x1, y3), (x1, y4), (x2, y3) e (x2, y4)
+    # Adicionando o retângulo abrangendo os quadrados (0, 2), (0, 3), (1, 2) e (1, 3)
     largura_quad = largura_campo / 9
     altura_quad = altura_campo / 6
     retangulo_destaque = patches.Rectangle((largura_quad * 0, altura_quad * 2), largura_quad * (1 - 0 + 1), altura_quad * (3 - 2 + 1), linewidth=1, edgecolor='red', facecolor='none')
     ax.add_patch(retangulo_destaque)
-    ax.add_patch(retangulo_campo)
 
     # #area outro lado
-    # retangulo_destaque = faz_quadrado(largura_campo,altura_campo,x8,x9,y3,y4)
     retangulo_destaque = patches.Rectangle((largura_quad * 7, altura_quad * 2), largura_quad * (8 - 7 + 1), altura_quad * (3 - 2 + 1), linewidth=1, edgecolor='red', facecolor='none')
-
     ax.add_patch(retangulo_destaque)
-    ax.add_patch(retangulo_campo)
 
     #quadrados do Campo, Lado A
     for parte in lado_a:
         retangulo_destaque = faz_quadrado(largura_campo,altura_campo,lado_a[parte])
         ax.add_patch(retangulo_destaque)
-        ax.add_patch(retangulo_campo)
     
     #quadrados do Campo, Lado B
     for parte in lado_b:
         retangulo_destaque = faz_quadrado(largura_campo,altura_campo,lado_b[parte])
         ax.add_patch(retangulo_destaque)
-        ax.add_patch(retangulo_campo)
     
+    ax.add_patch(retangulo_campo)
+
     # Adicionando informações
     plt.text(8, 28, "Área", fontsize=10, color='blue')
     plt.text(86, 28, "Área", fontsize=10, color='blue')
 
-
-
-    
+    #escrever o Nome da Área e A porcentagem
     #E2.2
     plt.text(3, 6, "E2.2", fontsize=10, color='blue')
     porcentagem  = porcentagem_pal["E2.2"]
@@ -62,11 +78,11 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     plt.text(14, 6, "E2.1", fontsize=10, color='blue')
     porcentagem  = porcentagem_pal["E2.1"]
     plt.text(12.5, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    E1.2
+    #E1.2
     plt.text(25.5, 6, "E1.2", fontsize=10, color='blue')
     porcentagem  = porcentagem_pal["E1.2"]
     plt.text(24, 2, f"{porcentagem: .2f}%", fontsize=10, color='black')
-    E1.1
+    #E1.1
     plt.text(25.5, 20, "E1.1", fontsize=10, color='blue')
     porcentagem  = porcentagem_pal["E1.1"]
     plt.text(24, 16, f"{porcentagem: .2f}%", fontsize=10, color='black')
@@ -143,7 +159,6 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     plt.text(84.5, 12, f"{porcentagem: .2f}%", fontsize=10, color='black')
 
 
-
     # Configurações do gráfico
     plt.xlim(-5, largura_campo + 5)
     plt.ylim(-5, altura_campo + 5)
@@ -151,6 +166,3 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
 
     return fig
 
-# Exibindo o campo de futebol com o quadrado abrangente no Streamlit
-figura = desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b)
-st.pyplot(figura)
