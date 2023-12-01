@@ -17,11 +17,6 @@ def main():
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
         st.session_state['ir_para_analise'] = False
-        with open('dados/quebra.json', 'r') as f:
-            data = json.load(f)
-            time = 'Palmeiras'
-            id = '1'
-        trata_dados(data, time, id, 'quebra')
     else:
         paginas()
 
@@ -54,28 +49,12 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     col1, col2 = st.columns(2)
     with col1:
         st.header("Geral")
-        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+        fig = px.pie(df_rupturas, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
         st.plotly_chart(fig)
         st.dataframe(df_desfechos) 
         
     with col2:
-        st.dataframe(df_rupturas) 
-        pass
-
-    #Front DashBoard
-def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
-    if st.button("Voltar"):
-        st.session_state['ir_para_analise'] = True
-        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header("Geral")
-        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-        st.plotly_chart(fig)
-        st.dataframe(df_desfechos) 
-        
-    with col2:
-        st.dataframe(df_rupturas) 
+        st.dataframe(contagem_desfechos) 
         pass
 
 def login_cadastro():
@@ -156,7 +135,7 @@ def pagina_partidas(partidas):
     else:
         st.title(f"Partidas")
         st.write("Clube não definido ou não informado.")
-
+    
     st.subheader("Filtro") 
     partidas_dic = partidas['partidas'][0]
     df_partidas = pd.DataFrame(partidas_dic)
@@ -174,7 +153,7 @@ def pagina_partidas(partidas):
     )
 
     st.subheader("Partidas")
-
+    
     df_filtrado = df_partidas.copy()
     if adversario_selecionado != "Todos os Adversários":
         df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
@@ -187,7 +166,11 @@ def pagina_partidas(partidas):
             # Usando uma chave de estado separada para o botão
             if st.button("Ir para a Página de Análise", key=f"botao_analise_{index}"):
                 st.session_state['ir_para_analise'] = True
-
+                resultado = dados(partida['clube'], partida['adversario'], partida['data'].strftime('%d/%m/%Y'))
+                print('CINECI',resultado[0], ' AQUI')
+                df = pd.DataFrame(resultado[0])
+                print(df)
+                dashboard_quebra(None, df, resultado[1], resultado[2])
 def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
     
     if not os.path.exists(pasta_saida):

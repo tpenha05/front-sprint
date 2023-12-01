@@ -33,3 +33,12 @@ def obter_clube_usuario():
     except requests.RequestException as e:
         print(f"Erro ao obter o clube: {e}")
         return None
+    
+def dados(clube, adversario, data):
+    headers = {'usuario': id_user_atual}
+    payload = {"clube": clube, "adversario": adversario, "data": data}
+    response = requests.get(f"{url}/partidas/dados", headers=headers, json=payload)
+    print(response.text)
+    return json.loads(response.text)
+
+
