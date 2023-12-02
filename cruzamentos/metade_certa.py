@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import streamlit as st
-from geral import *
+from .geral import *
 
 def faz_campinho(largura_campo,altura_campo,lista):
     largura_quad = largura_campo / 4.5

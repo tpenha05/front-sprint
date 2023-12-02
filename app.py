@@ -317,7 +317,8 @@ def paginas():
     if opcao_pagina == "Rupturas":
         pagina_dados()
     elif opcao_pagina == "Cruzamento":
-        pagina_configuracoes()
+        from cruzamentos.exibe_cruz import dash_cruzamento
+        dash_cruzamento()
     elif opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)

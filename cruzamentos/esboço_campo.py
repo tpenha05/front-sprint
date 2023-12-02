@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import streamlit as st
-from geral import *
+from .geral import *
 
 def faz_quadrado(largura_campo,altura_campo,lista):
     largura_quad = largura_campo / 9
@@ -51,7 +51,7 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     for chave in escrita_a.keys():
         plt.text(escrita_a[chave][0],escrita_a[chave][1],chave,fontsize=10, color='blue')
         porcentagem = porcentagem_pal[chave]
-        plt.text(escrita_a[chave][2],escrita_a[chave][3],f"{porcentagem: .2f}%", fontsize=10, color='black')
+        plt.text(escrita_a[chave][2]-1,escrita_a[chave][3],f"{porcentagem: .2f}%", fontsize=10, color='black')
 
     for chave in escrita_b.keys():
         plt.text(escrita_b[chave][0],escrita_b[chave][1],chave,fontsize=10, color='blue')
@@ -66,5 +66,5 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     return fig
 
 # Exibindo o campo de futebol com o quadrado abrangente no Streamlit
-figura = desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b)
-st.pyplot(figura)
+    # figura = desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time, lado_a, lado_b)
+    # st.pyplot(figura)
