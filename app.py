@@ -9,24 +9,6 @@ from PIL import Image
 from datetime import date
 from time import sleep
 
-# Dados de exemplo para autenticação
-# usuarios_cadastrados = {
-#     'usuario1': 'senha123',
-#     'usuario2': 'senha456',
-#     '1':'1'
-# }
-
-# Função para verificar as credenciais
-# def verifica_credenciais(username, senha):
-#     return usuarios_cadastrados.get(username) == senha
-
-# Função para adicionar novos usuários
-# def adicionar_usuario(username, senha):
-#     if username not in usuarios_cadastrados:
-#         usuarios_cadastrados[username] = senha
-#         return True
-#     return False
-
 # 1- Função principal para o aplicativo
 def main():
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
@@ -40,40 +22,6 @@ def main():
         trata_dados(data, time, id, 'quebra')
     else:
         paginas()
-
-
-# Dados
-# def trata_dados(dados, time, id, tipo):
-    #jogadores numero de rupturas
-        # dicionario_rupturas = [{}]
-        # total_rupturas = {}
-        # total_desfechos = {}
-        # for ruptura in dados['time'][id]['rupturas']:
-        #     instante_ruptura = ruptura.get('instante_ruptura', None)
-        #     if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
-        #         novo_registro = {
-        #             "instante_ruptura": instante_ruptura,
-        #             "inicio_ruptura": ruptura.get('inicio_ruptura', None),
-        #             'zona': ruptura.get('zona_defesa', None),
-        #             'desfecho': ruptura.get('desfecho', None),
-        #             'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
-        #         }
-        #         dicionario_rupturas.append(novo_registro)
-                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
-            # for i in range(len(dicionario_rupturas)):
-            #     if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
-            #       if ruptura['nome_jogador_ruptura'] not in total_rupturas:
-            #         total_rupturas[ruptura['nome_jogador_ruptura']] = 0
-            #       total_rupturas[ruptura['nome_jogador_ruptura']] += 1
-        #Desfechos Lista  
-        
-        # total_desfechos = dados['time'][id]['desfechos']
-        # df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
-        # trata_video(dicionario_rupturas)
-        # df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
-        # cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
-        # ######
-        # dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
 
 # 2- Vídeo
 def converter_tempo_para_segundos(tempo_str):
@@ -131,22 +79,6 @@ def video_teste():
         st.video(video_bytes)
     else:
         st.error(f"O arquivo {nome_arquivo} não foi encontrado.")
-
-    #Front DashBoard
-# def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
-#     if st.button("Voltar"):
-#         st.session_state['ir_para_analise'] = True
-        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
-    # col1, col2 = st.columns(2)
-    # with col1:
-    #     st.header("Geral")
-    #     fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-    #     st.plotly_chart(fig)
-    #     st.dataframe(df_desfechos) 
-        
-    # with col2:
-    #     st.dataframe(df_rupturas) 
-    #     pass
 
 # 3- Dados
 def trata_dados(dados, time, id, tipo):
@@ -232,63 +164,6 @@ def login_cadastro():
             else:
                 st.error("Credenciais inválidas. Tente novamente.")
 
-# Função para exibir a página de visualização de dados
-# def pagina_dados():
-#     st.title("Visualização de Dados")
-#     df = pd.DataFrame({
-#         'X': [1, 2, 3, 4, 5],
-#         'Y': [10, 11, 12, 13, 14],
-#         'Z': [20, 21, 22, 23, 24]
-#     })
-#     st.dataframe(df)
-#     st.title("Exemplo de Plotly no Streamlit")
-
-    # Gráfico de dispersão interativo usando Plotly Express
-    # fig = px.scatter(df, x='X', y='Y', size='Z', title='Gráfico de Dispersão Interativo')
-    # st.plotly_chart(fig)
-
-    # dados = {'Categoria': ['A', 'B', 'C', 'D'],
-    #      'Valores': [30, 40, 20, 10]}
-    # df_2 = pd.DataFrame(dados)
-
-    # Título do aplicativo
-    # st.title("Exemplo de Gráfico de Pizza no Streamlit")
-
-    # Gráfico de pizza interativo usando Plotly Express
-    # fig = px.pie(df_2, values='Valores', names='Categoria', title='Gráfico de Pizza Interativo')
-    # st.plotly_chart(fig)
-
-
-# Função para exibir a página de configurações
-# def pagina_configuracoes():
-#     st.title("Configurações")
-    # Adicione configurações ou opções aqui
-
-# def home():
-
-#     button = False
-
-#     with open("design/style/home.css") as d:
-#         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-
-#     with open("design/style/sidebar.css") as d:
-#         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-
-#     col1, col2 = st.columns([1,1])
-#     with col1:
-#         image = Image.open('design/photos/logo.webp')
-#         st.image(image)
-
-#     with col2:
-#         st.subheader("Artificial Intelligence to monitor players every instant of every match")
-
-    # if st.button("Acessar Partidas"):
-    #     button = True
-    #     dados_partidas = partidas()
-    #     pagina_partidas(dados_partidas)
-    
-    # return button
-
 # 6- Partidas
 def pagina_partidas(partidas):
 
@@ -352,23 +227,11 @@ def paginas():
     opcoes = ["Partidas"]
     opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
     # Carregando a página selecionada
-    # if opcao_pagina == "Home":
-    #     home()
-    # elif opcao_pagina == "Cruzamento":
-    #     pagina_configuracoes()
     if opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)
-    # elif opcao_pagina == "Cruzamentos":
-    #     video_teste()
-    # elif opcao_pagina == "Rupturas":
-    #     video_teste()
-    # elif opcao_pagina == "Configurações":
-    #     video_teste()
-    # elif opcao_pagina == "Sair":
-    #     login_cadastro()
-    # else:
-    #     st.error("Página não encontrada.")
+    else:
+        st.error("Página não encontrada.")
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
