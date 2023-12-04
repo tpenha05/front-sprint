@@ -37,7 +37,6 @@ def partidas():
         st.error(f"Erro de requisição: {e}")
         st.experimental_rerun() 
 
-
 def obter_clube_usuario():
     try:
         header = {'usuario': id_user_atual}

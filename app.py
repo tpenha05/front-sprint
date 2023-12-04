@@ -23,6 +23,7 @@ def main():
     else:
         paginas()
 
+
 # 2- Vídeo
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
@@ -50,6 +51,7 @@ def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalm
 
     for numero_clipe, (inicio, fim) in tempos_clipes.items():
         nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}_{pasta_saida}.mp4")
+
 
         if not os.path.exists(nome_arquivo_saida):
             print(f"Cortando clipe {numero_clipe}_{pasta_saida}...")
@@ -224,12 +226,18 @@ def paginas():
     st.sidebar.image(sidebar_image, width=200)
     st.sidebar.subheader("")
     
-    opcoes = ["Partidas"]
+    opcoes = ["Partidas", "Cruzamentos", "Vídeos"]
     opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
+
     # Carregando a página selecionada
     if opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)
+    elif opcao_pagina == "Cruzamentos":
+        from cruzamentos.exibe_cruz import dash_cruzamento
+        dash_cruzamento()
+    elif opcao_pagina == "Vídeos":
+            video_teste()
     else:
         st.error("Página não encontrada.")
 
