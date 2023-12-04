@@ -15,7 +15,6 @@ for id_time in dados_dict["time"].keys():
 
 primeiro_time = dados_dict["time"][times[0]]
 segundo_time = dados_dict["time"][times[1]]
-print(primeiro_time, segundo_time)
 
 #lista de dicionarios contendo todos os cruzamentos dos respectivos times
 primeiro_time_cruzamentos = primeiro_time["rupturas"]
