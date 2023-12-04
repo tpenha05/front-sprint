@@ -1,5 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Asap&family=IM+Fell+English+SC&display=swap");
+
+*{
+    font-family: "Asap", sans-serif;
+}
+
 div.st-emotion-cache-1n76uvr.e1f1d6gn1{
-    margin-top: 8%;
+    margin-top: 8.5%;
 }
 
 img{
@@ -7,12 +13,12 @@ img{
 }
 
 div.st-emotion-cache-1njjmvq.e1f1d6gn1, p, span.st-emotion-cache-10trblm.e1nzilvr1, label{
-    color: black;
+    color: #1A1432;
 }
 
 button.st-emotion-cache-19rxjzo.ef3psqc12, section.main.st-emotion-cache-uf99v8.ea3mdgi5 {
-    background-color: #ffffff;
-    border: 1px solid #000000; 
+    background-color: #F7F7F7;
+    border: 1px solid #1A1432; 
 }
 
 body {
@@ -21,8 +27,8 @@ body {
 }
 
 header{
-    background-color: black;
-    color: white;
+    background-color: #1A1432;
+    color: #F7F7F7;
 }
 
 img, .img{

@@ -1,30 +1,34 @@
+@import url("https://fonts.googleapis.com/css2?family=Asap&family=IM+Fell+English+SC&display=swap");
+
+*{
+    font-family: "Asap", sans-serif;
+}
+
 header{
-    background-color: black;
-    color: white;
+    background-color: #1A1432;
+    color: #F7F7F7;
 }
 
 h1{
-    color: black; 
+    color: #1A1432; 
 }
 
 
 div.st-expander.stEmotionContainer.e1oz9kzw0 div.st-emotion-cache-1d8jygy.e1oz9kzw1 {
-    color: black;
+    color: #1A1432;
 }
-
 
 button.st-emotion-cache-19rxjzo.ef3psqc12{
-    background-color: black;
-    color: white;
+    background-color: #1A1432;
+    color: #F7F7F7;
 }
 
-
 span{
-    color:black
+    color:#1A1432
 }    
 
 div.st-emotion-cache-16idsys.e1nzilvr5{
-    color: white;
+    color: #F7F7F7;
 }
 
 div.block-container.st-emotion-cache-1y4p8pa.ea3mdgi4{
@@ -32,9 +36,22 @@ div.block-container.st-emotion-cache-1y4p8pa.ea3mdgi4{
 }
 
 button.st-emotion-cache-7ym5gk.ef3psqc12{
-    background-color: black;
+    background-color: #1A1432;
 }
 
 button.st-emotion-cache-ch5dnh.ef3psqc5, button.st-emotion-cache-6q9sum.ef3psqc4{
-    color: white;
+    color: #F7F7F7;
+}
+
+span.st-emotion-cache-10trblm.e1nzilvr1{
+    font-weight: normal;
+}
+
+h3{
+    padding-top: 0px;
+}
+
+h3#lista-de-partidas{
+    margin-bottom: 3.2%;
+    margin-top: 1.8%;
 }
