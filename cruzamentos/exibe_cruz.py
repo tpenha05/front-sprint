@@ -15,6 +15,13 @@ def dash_cruzamento():
         time_usuario_cruzamento = segundo_time_cruzamentos
 
     st.title("CRUZAMENTOS")
+    json_cruz = json.dumps(dados_dict, indent=4, separators=(',', ': '))
+    st.download_button(
+        label="Baixar Cruzamentos",
+        data=json_cruz,
+        file_name="cruzamentos.json",
+        mime="application/json",
+    )
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(    f"<h1 style='text-align: center;'>{nome_primeiro_time} x {nome_segundo_time}</h1>", 
