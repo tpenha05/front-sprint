@@ -42,14 +42,14 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     plt.text(86, 28, "Área", fontsize=10, color='black') #cor da escrita "Área"
     ax.add_patch(retangulo_destaque)
 
-    circulo_central = patches.Circle((largura_campo/2, altura_campo/2), radius=5, edgecolor="black", facecolor='none')
+    circulo_central = patches.Circle((largura_campo/2, altura_campo/2), radius=5, edgecolor="white", facecolor='none')
     ax.add_patch(circulo_central)
 
-    circulo_bola = patches.Circle((largura_campo/2, altura_campo/2), radius=0.4, edgecolor="black", facecolor='black')
+    circulo_bola = patches.Circle((largura_campo/2, altura_campo/2), radius=0.4, edgecolor="white", facecolor='white')
     ax.add_patch(circulo_bola)
 
-    linha = patches.Rectangle((largura_campo/2, 0), 0, altura_campo, linewidth=1, edgecolor='black', facecolor='none')
-    linha.set_facecolor('black')
+    linha = patches.Rectangle((largura_campo/2, 0), 0, altura_campo, linewidth=1, edgecolor='white', facecolor='none')
+    linha.set_facecolor('white')
     ax.add_patch(linha)
 
 
