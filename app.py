@@ -14,10 +14,11 @@ from cruzamentos.esboço_campo import *
 from cruzamentos.geral import *
 from cruzamentos.graficos_cruzamentos import *
 import json 
+from pydub import AudioSegment
+from pydub.playback import play
 
 # Cruzamentos
 # st.set_page_config(layout="wide")
-
 def dash_cruzamento():
 
     with open("design/style/cruzamento.css") as d:
@@ -233,6 +234,11 @@ def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
 
     video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
 
+
+# Função para reproduzir um vídeo a partir de um intervalo de tempo
+def play_video(video_url, start_time, end_time):
+    st.video(video_url, start_time=start_time, end_time=end_time)
+
 def video_teste():
     st.title("Colocando o vídeo teste")
 
@@ -240,6 +246,30 @@ def video_teste():
     tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
 
     st.write(tempos_rupturas)
+    st.write(tempos_cruzamentos)
+
+        # Escolha o dicionário de vídeo
+    video_dict = st.radio("Selecione o dicionário de vídeo:", ("Dicionário 1", "Dicionário 2"))
+
+    # Selecione a chave do vídeo
+    selected_key = st.selectbox("Selecione a chave do vídeo:", list(tempos_rupturas.keys()) if video_dict == "Dicionário 1" else list(tempos_cruzamentos.keys()))
+
+    # URL do vídeo
+    video_url = "https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview"
+
+    # Verifique qual dicionário de vídeo foi selecionado e obtenha o intervalo de tempo
+    if video_dict == "Dicionário 1":
+        selected_video_data = tempos_rupturas
+    else:
+        selected_video_data = tempos_cruzamentos
+
+    if selected_key in selected_video_data:
+        start_time, end_time = selected_video_data[selected_key]
+        st.write(f"Intervalo de tempo selecionado: {start_time} - {end_time}")
+        play_video(video_url, start_time, end_time)
+    else:
+        st.warning("Chave selecionada não encontrada no dicionário.")
+
 
 # 3- Dados
 def trata_dados(dados, time, id, tipo):
