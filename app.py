@@ -13,6 +13,7 @@ from cruzamentos.cruz_funcoes import *
 from cruzamentos.esboço_campo import *
 from cruzamentos.geral import *
 from cruzamentos.graficos_cruzamentos import *
+import json 
 
 # Cruzamentos
 # st.set_page_config(layout="wide")
@@ -156,6 +157,12 @@ def main():
         paginas()
 
 # 2- Vídeo
+
+def pega_dados_videos(path_dado):
+    file = open(path_dado)
+    data = json.load(file)
+    return data 
+
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
         return None
@@ -174,6 +181,8 @@ def trata_video_ruptura(data_rupturas):
         final_video = converter_tempo_para_segundos(ruptura_tempo_sec) + 5
         dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
         numero_ruptura += 1
+
+    return dic_tempo_rupturas
 
 def trata_video_cruzamentos(data_cruzamentos):
 
@@ -385,6 +394,8 @@ def paginas():
     elif opcao_pagina == "Cruzamentos":
         dash_cruzamento()
     elif opcao_pagina == "Vídeos":
+        trata_video_cruzamentos()
+        trata_video_ruptura()
         video_teste()
     else:
         st.error("Página não encontrada.")
