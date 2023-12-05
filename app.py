@@ -164,7 +164,7 @@ def converter_tempo_para_segundos(tempo_str):
 
     return horas * 3600 + minutos * 60 + segundos
 
-def trata_video(data_rupturas,click):
+def trata_video_ruptura(data_rupturas):
     
     df_rupturas = pd.DataFrame(data_rupturas)
     dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
@@ -344,8 +344,7 @@ def pagina_partidas(partidas):
             st.subheader(f"{partida['clube']} {partida['resultado']} {partida['adversario']}")
         with col3:
             if st.button('Estatísticas', key=f'botao_analise_{index}'):
-                # st.session_state['ir_para_analise'] = True
-                dash_cruzamento()
+                st.session_state['ir_para_analise'] = True
                 st.rerun()
             # st.write(f"Resultado: {partida['resultado']}")
             # Usando uma chave de estado separada para o botão
