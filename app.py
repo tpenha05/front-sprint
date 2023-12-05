@@ -7,11 +7,6 @@ from PIL import Image
 from datetime import date
 from time import sleep
 # import streamlit as st
-from cruzamentos.metade_certa import *
-from cruzamentos.cruz_funcoes import *
-from cruzamentos.esboço_campo import *
-from cruzamentos.geral import *
-from cruzamentos.graficos_cruzamentos import *
 from cruzamentos.dashboard import *
 import json 
 from IPython.display import HTML
