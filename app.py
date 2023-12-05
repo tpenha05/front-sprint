@@ -21,7 +21,6 @@ def main():
         st.set_page_config(layout="centered")
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
-        st.session_state['ir_para_analise'] = False
         with open('dados/quebra.json', 'r') as f:
             data = json.load(f)
             time = 'Palmeiras'
@@ -130,7 +129,8 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
     if st.button("Voltar"):
-        st.session_state['ir_para_analise'] = True
+        st.session_state['ir_para_analise'] = False
+        st.rerun()
     tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
 
     with tab1:
