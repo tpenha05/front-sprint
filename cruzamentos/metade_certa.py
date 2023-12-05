@@ -6,7 +6,7 @@ from .geral import *
 def faz_campinho(largura_campo,altura_campo,lista):
     largura_quad = largura_campo / 4.5
     altura_quad = altura_campo / 6
-    retangulo_destaque = patches.Rectangle((largura_quad * lista[0], altura_quad * lista[2]), largura_quad * (lista[1] - lista[0] + 1), altura_quad * (lista[3] - lista[2] + 1), linewidth=1, edgecolor='red', facecolor='none')
+    retangulo_destaque = patches.Rectangle((largura_quad * lista[0], altura_quad * lista[2]), largura_quad * (lista[1] - lista[0] + 1), altura_quad * (lista[3] - lista[2] + 1), linewidth=1, edgecolor='black', facecolor='none')
     return retangulo_destaque
     
 
@@ -19,15 +19,18 @@ def desenho_zona(lado_a, local):
     altura_campo = 60
 
     # Desenhando o campo de futebol
-    retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='green', facecolor='none')
+    fundo_destaque = patches.Rectangle((0, 0), largura_campo-16.8, altura_campo, linewidth=2, edgecolor='black', facecolor='#529F40')
+    ax.add_patch(fundo_destaque)
+
+    retangulo_campo = patches.Rectangle((0, 0), largura_campo-16.8, altura_campo, linewidth=2, edgecolor='black', facecolor='none')
 
     largura_quad = largura_campo / 4.5
     altura_quad = altura_campo / 6
 
     # Adicionando o retângulo abrangendo os quadrados (x1, y3), (x1, y4), (x2, y3) e (x2, y4)
-    retangulo_destaque = patches.Rectangle((largura_quad * 0, altura_quad * 2), largura_quad * (1 - 0 + 1), altura_quad * (3 - 2 + 1), linewidth=1, edgecolor='red', facecolor='none')
-    retangulo_destaque.set_facecolor('red')
-    plt.text(8, 28, "Área", fontsize=10, color='White') #cor da escrita "Área"
+    retangulo_destaque = patches.Rectangle(((0, altura_quad * 2)), largura_quad * (1 - 0 + 1), altura_quad * (3 - 2 + 1), linewidth=1, edgecolor='green', facecolor='none')
+    retangulo_destaque.set_facecolor('#62ba17')
+    plt.text(8, 28, "Área", fontsize=10, color='black') #cor da escrita "Área"
     ax.add_patch(retangulo_destaque)
 
     
@@ -39,13 +42,13 @@ def desenho_zona(lado_a, local):
     
     
     for chave in escrita_a.keys():
-        plt.text(escrita_a[chave][0],escrita_a[chave][1]-2,chave,fontsize=9, color='blue')
+        plt.text(escrita_a[chave][0],escrita_a[chave][1]-2,chave,fontsize=9, color='black')
         
     for parte in lado_a:
         retangulo_destaque = faz_campinho(largura_campo, altura_campo, lado_a[parte])
         # Adicionando preenchimento colorido a alguns quadrados
         if parte in [local]:
-            retangulo_destaque.set_facecolor('orange')
+            retangulo_destaque.set_facecolor('#F6AE2D')
         else:
             retangulo_destaque.set_facecolor('none')  # Mantém outros quadrados sem preenchimento
         ax.add_patch(retangulo_destaque)

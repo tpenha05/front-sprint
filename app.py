@@ -2,29 +2,30 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from funcoes import *
-from dashboard import *
 from moviepy.editor import VideoFileClip
 import os 
 from PIL import Image
 from datetime import date
 from time import sleep
+# import streamlit as st
+from cruzamentos.dashboard import *
 
 # 1- Função principal para o aplicativo
 def main():
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
+        st.set_page_config(layout="centered")
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
-        st.session_state['ir_para_analise'] = False
         with open('dados/quebra.json', 'r') as f:
             data = json.load(f)
             time = 'Palmeiras'
             id = '1'
         trata_dados(data, time, id, 'quebra')
     else:
+        st.set_page_config(layout="wide")
         paginas()
 
-
-# 2- Vídeo
+# 2- Vídeos
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
         return None
@@ -68,6 +69,9 @@ def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
     video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
 
 def video_teste():
+    with open("design/style/sidebar.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+        
     st.title("Colocando o vídeo teste")
 
     rupturas_disponiveis = [1, 2, 3, 4, 5, 6, 7]  
@@ -116,21 +120,32 @@ def trata_dados(dados, time, id, tipo):
         dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
 
 
-# 4- DashBoard
+# 4- DashBoards
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
+
+    with open("design/style/dashboard.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+
     if st.button("Voltar"):
-        st.session_state['ir_para_analise'] = True
-        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header("Geral")
-        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-        st.plotly_chart(fig)
-        st.dataframe(df_desfechos) 
-        
-    with col2:
-        st.dataframe(df_rupturas) 
-        pass
+        st.session_state['ir_para_analise'] = False
+        st.rerun()
+    tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
+
+    with tab1:
+            # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+        col1, col2 = st.columns(2)
+        with col1:
+            st.header("Geral")
+            fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+            st.plotly_chart(fig)
+            st.dataframe(df_desfechos) 
+            
+        with col2:
+            st.dataframe(df_rupturas) 
+            pass
+
+    with tab2:
+        dashboard_cruzamento()
 
 # 5- Login
 def login_cadastro():
@@ -215,10 +230,6 @@ def pagina_partidas(partidas):
             if st.button('Estatísticas', key=f'botao_analise_{index}'):
                 st.session_state['ir_para_analise'] = True
                 st.rerun()
-            # st.write(f"Resultado: {partida['resultado']}")
-            # Usando uma chave de estado separada para o botão
-            # if st.button("Estatísticas da Partida", key=f"botao_analise_{index}"):
-                # st.session_state['ir_para_analise'] = True
 
 # 7- Controle de navegação entre as páginas
 def paginas():
@@ -226,20 +237,15 @@ def paginas():
     st.sidebar.image(sidebar_image, width=200)
     st.sidebar.subheader("")
     
-    opcoes = ["Partidas", "Cruzamentos", "Vídeos"]
+    opcoes = ["Partidas", "Vídeos"]
     opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
     # Carregando a página selecionada
     if opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)
-    elif opcao_pagina == "Cruzamentos":
-        from cruzamentos.exibe_cruz import dash_cruzamento
-        dash_cruzamento()
     elif opcao_pagina == "Vídeos":
-            video_teste()
-    else:
-        st.error("Página não encontrada.")
+        video_teste()
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
