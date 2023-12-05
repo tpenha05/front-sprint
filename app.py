@@ -175,6 +175,24 @@ def trata_video_ruptura(data_rupturas):
         dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
         numero_ruptura += 1
 
+def trata_video_cruzamentos(data_cruzamentos):
+
+    tempo_video_cruzamentos = {}
+    instantes_cruzamentos = []
+
+    for time_id, time_data in data_cruzamentos['time'].items():
+        for cruzamento in time_data['rupturas']:
+            instantes_cruzamentos.append(cruzamento['instante_cruzamento'])
+
+    numero_cruzamento = 1 
+    for tempo in instantes_cruzamentos:
+        tempo_segundos = converter_tempo_para_segundos(tempo)
+        inicio_video = tempo_segundos -5 
+        final_video =  tempo_segundos + 5
+        tempo_video_cruzamentos[numero_cruzamento] = (inicio_video,final_video)
+        numero_cruzamento += 1
+    return tempo_video_cruzamentos
+
 def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
     
     if not os.path.exists(pasta_saida):
