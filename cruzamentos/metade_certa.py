@@ -19,6 +19,9 @@ def desenho_zona(lado_a, local):
     altura_campo = 60
 
     # Desenhando o campo de futebol
+    fundo_destaque = patches.Rectangle((0, 0), largura_campo-16.8, altura_campo, linewidth=2, edgecolor='black', facecolor='#529F40')
+    ax.add_patch(fundo_destaque)
+
     retangulo_campo = patches.Rectangle((0, 0), largura_campo-16.8, altura_campo, linewidth=2, edgecolor='black', facecolor='none')
 
     largura_quad = largura_campo / 4.5

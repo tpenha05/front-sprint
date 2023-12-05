@@ -12,132 +12,9 @@ from cruzamentos.cruz_funcoes import *
 from cruzamentos.esboço_campo import *
 from cruzamentos.geral import *
 from cruzamentos.graficos_cruzamentos import *
+from cruzamentos.dashboard import *
 import json 
 from IPython.display import HTML
-
-# Cruzamentos
-# st.set_page_config(layout="wide")
-def dash_cruzamento():
-
-    with open("design/style/cruzamento.css") as d:
-        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-
-    clube_usuario = st.session_state['clube']
-    if primeiro_time["nome"] == clube_usuario:
-        # time_usuario = primeiro_time
-        time_usuario_cruzamento = primeiro_time_cruzamentos
-    elif segundo_time["nome"] == clube_usuario:
-        # time_usuario = segundo_time
-        time_usuario_cruzamento = segundo_time_cruzamentos
-
-    # st.subheader("CRUZAMENTOS")
-    col1,space, col2 = st.columns([120,15,120])
-    with col1:
-        st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
-        with st.container():
-            st.pyplot(desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time,lado_a,lado_b))
-            # col_grafico, col_grafico_segundo_time = st.columns(2)
-            # with col_grafico:
-            #     grafico_frequencia(porcentagem_primeiro_time, nome_primeiro_time)
-            
-            # with col_grafico_segundo_time:
-            #     grafico_frequencia(porcentagem_segundo_time, nome_segundo_time)
-
-        # st.write("---")
-        with st.container():
-            coluna_casa, coluna_visitante = st.columns(2)
-            with coluna_casa:
-                jogadores = []
-                cruzamentos = []
-                st.markdown(f"Destaques {nome_primeiro_time} :")
-
-                for jogador in destaques_primeiro_time:
-                    # st.write("---")
-                    # st.markdown(f"{destaques_primeiro_time[jogador]} - {jogador} ")
-                    jogadores.append(jogador)
-                    cruzamentos.append(destaques_primeiro_time[jogador])
-
-                data_team1 = {'Jogador': jogadores,'Ordenar': cruzamentos}
-
-                df = pd.DataFrame(data_team1)
-                st.dataframe(data=df, width=240, hide_index=True)
-        
-            with coluna_visitante:
-                jogadores_2 = []
-                cruzamentos_2 = []
-                st.markdown(f"Destaques {nome_segundo_time} :")
-                for jogador in destaques_segundo_time:
-                    # st.markdown(f"{destaques_segundo_time[jogador]} - {jogador}")
-                    jogadores_2.append(jogador)
-                    cruzamentos_2.append(destaques_segundo_time[jogador])
-
-                data_team2 = {'Jogador': jogadores_2,'Ordenar': cruzamentos_2}
-
-                df = pd.DataFrame(data_team2)
-                st.dataframe(data=df, width=240, hide_index=True)
-
-        # st.write("---")
-
-        with st.container():
-            col_grafico, col_grafico_segundo_time = st.columns(2)
-            with col_grafico:
-                grafico_cruza_camisa(n_aparicoes_primeiro_time_ataque, nome_primeiro_time)
-                grafico_resultados(desfechos_primeiro_time, len(primeiro_time_cruzamentos), nome_primeiro_time)
-            with col_grafico_segundo_time:
-                grafico_cruza_camisa(n_aparicoes_segundo_time_ataque, nome_segundo_time)
-                grafico_resultados(desfechos_segundo_time, len(segundo_time_cruzamentos), nome_segundo_time)
-
-    with col2:
-
-        #Caixa para selecionar o cruzamento, pegando o id do cruzamento, sendo ele (id-1)
-        lista_id = []
-        desfecho = []
-        tempo = []
-        for id in range(len(time_usuario_cruzamento)):
-            lista_id.append(f"Cruzamento {id + 1}")
-            # desfecho.append(f"**Desfecho:**{time_usuario_cruzamento[id]["desfecho"]}")
-            # tempo.append(f"**Tempo de jogo:** {time_usuario_cruzamento[id]["instante_cruzamento"]}")
-
-        opcao_selecionada = st.selectbox('Selecione uma opção', lista_id)
-        opcao_selecionada = opcao_selecionada.split(" ")
-        id = int(opcao_selecionada[1]) -1
-        st.write("---")
-        
-        with st.container():
-            col_um, col_dois = st.columns(2)
-            with col_um:
-                desfecho = time_usuario_cruzamento[id]["desfecho"]
-                st.markdown(f"**Desfecho:** {desfecho}")
-                
-            with col_dois:
-                tempo_de_jogo = time_usuario_cruzamento[id]["instante_cruzamento"]
-                st.markdown(f"**Tempo de jogo:** {tempo_de_jogo}")
-            
-            # st.markdown(f"aqui o video do cruzamento {id +1 }")
-        st.write("---")
-
-        
-        coluna1, coluna2, coluna3 = st.columns([1,1,1.8])
-        with st.container():
-
-            with coluna1:
-                #jogadores ataque
-                st.write("**Atacando:**")
-                for jogador in jogadores_ataque(time_usuario_cruzamento[id]):
-                    st.markdown(f"{jogador}")
-
-            with coluna2:
-                #jogadores Defesa
-                st.write("**Defendendo:**")
-                for jogador in jogadores_defesa(time_usuario_cruzamento[id]):
-                    st.markdown(f"{jogador}")
-
-            with coluna3:
-                #lugar do Campo.
-                # st.markdown("**Zona do Campo**")
-                zona = time_usuario_cruzamento[id]["zona"]
-                figura_cortada = desenho_zona(lado_a,zona)
-                st.pyplot(figura_cortada)
 
 # 1- Função principal para o aplicativo
 def main():
@@ -145,7 +22,6 @@ def main():
         st.set_page_config(layout="centered")
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
-        st.session_state['ir_para_analise'] = False
         with open('dados/quebra.json', 'r') as f:
             data = json.load(f)
             time = 'Palmeiras'
@@ -156,13 +32,12 @@ def main():
         paginas()
 
 # 2- Vídeo
-
 def pega_dados_videos(path_dado):
 
     file = open(path_dado)
     data = json.load(file)
     return data 
-
+  
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
         return None
@@ -210,6 +85,9 @@ def trata_video_cruzamentos(data_cruzamentos):
     return tempo_video_cruzamentos
 
 def video_teste():
+    with open("design/style/sidebar.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+        
     st.title("Colocando o vídeo teste")
 
     tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
@@ -217,7 +95,7 @@ def video_teste():
 
     st.write(tempos_rupturas)
     st.write(tempos_cruzamentos)
-
+    
     video_dict = st.radio("Selecione o dicionário de vídeo:", ("Rupturas", "Cruzamentos"))
 
     selected_key = st.selectbox("Selecione a chave do vídeo:", list(tempos_rupturas.keys()) if video_dict == "Rupturas" else list(tempos_cruzamentos.keys()))
@@ -272,21 +150,32 @@ def trata_dados(dados, time, id, tipo):
         dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
 
 
-# 4- DashBoard
+# 4- DashBoards
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
+
+    with open("design/style/dashboard.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+
     if st.button("Voltar"):
-        st.session_state['ir_para_analise'] = True
-        # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header("Geral")
-        fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-        st.plotly_chart(fig)
-        st.dataframe(df_desfechos) 
-        
-    with col2:
-        st.dataframe(df_rupturas) 
-        pass
+        st.session_state['ir_para_analise'] = False
+        st.rerun()
+    tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
+
+    with tab1:
+            # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+        col1, col2 = st.columns(2)
+        with col1:
+            st.header("Geral")
+            fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+            st.plotly_chart(fig)
+            st.dataframe(df_desfechos) 
+            
+        with col2:
+            st.dataframe(df_rupturas) 
+            pass
+
+    with tab2:
+        dashboard_cruzamento()
 
 # 5- Login
 def login_cadastro():
@@ -371,10 +260,6 @@ def pagina_partidas(partidas):
             if st.button('Estatísticas', key=f'botao_analise_{index}'):
                 st.session_state['ir_para_analise'] = True
                 st.rerun()
-            # st.write(f"Resultado: {partida['resultado']}")
-            # Usando uma chave de estado separada para o botão
-            # if st.button("Estatísticas da Partida", key=f"botao_analise_{index}"):
-                # st.session_state['ir_para_analise'] = True
 
 # 7- Controle de navegação entre as páginas
 def paginas():
@@ -382,21 +267,15 @@ def paginas():
     st.sidebar.image(sidebar_image, width=200)
     st.sidebar.subheader("")
     
-    opcoes = ["Partidas", "Cruzamentos", "Vídeos"]
+    opcoes = ["Partidas", "Vídeos"]
     opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
     # Carregando a página selecionada
     if opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)
-    elif opcao_pagina == "Cruzamentos":
-        dash_cruzamento()
     elif opcao_pagina == "Vídeos":
         video_teste()
-    else:
-        st.error("Página não encontrada.")
-
-    return opcao_pagina
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":
