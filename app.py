@@ -159,6 +159,7 @@ def main():
 # 2- Vídeo
 
 def pega_dados_videos(path_dado):
+
     file = open(path_dado)
     data = json.load(file)
     return data 
@@ -173,12 +174,19 @@ def converter_tempo_para_segundos(tempo_str):
 
 def trata_video_ruptura(data_rupturas):
     
-    df_rupturas = pd.DataFrame(data_rupturas)
+    tempos_rupturas = []
+    for time_id, time_data in data_rupturas["time"].items():
+        rupturas = time_data["rupturas"]
+        for ruptura in rupturas:
+            inicio_ruptura = ruptura["inicio_ruptura"]
+            tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
+            tempos_rupturas.sort()
+
     dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
     numero_ruptura = 1
-    for ruptura_tempo_sec in df_rupturas["inicio_ruptura"]:
-        inicio_video = converter_tempo_para_segundos(ruptura_tempo_sec) - 5
-        final_video = converter_tempo_para_segundos(ruptura_tempo_sec) + 5
+    for ruptura_tempo_sec in tempos_rupturas:
+        inicio_video = ruptura_tempo_sec - 5
+        final_video = ruptura_tempo_sec + 5
         dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
         numero_ruptura += 1
 
@@ -228,17 +236,10 @@ def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
 def video_teste():
     st.title("Colocando o vídeo teste")
 
-    rupturas_disponiveis = [1, 2, 3, 4, 5, 6, 7]  
-    escolha_ruptura = st.selectbox("Escolha o número da ruptura", rupturas_disponiveis)
+    tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
+    tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
 
-    nome_arquivo = f"videos_rupturasPalmeirasxBragantino_12.12.12/ruptura_{escolha_ruptura}_videos_rupturasPalmeirasxBragantino_12.12.12.mp4"
-
-    if os.path.exists(nome_arquivo):
-        video_file = open(nome_arquivo, 'rb')
-        video_bytes = video_file.read()
-        st.video(video_bytes)
-    else:
-        st.error(f"O arquivo {nome_arquivo} não foi encontrado.")
+    st.write(tempos_rupturas)
 
 # 3- Dados
 def trata_dados(dados, time, id, tipo):
@@ -394,8 +395,6 @@ def paginas():
     elif opcao_pagina == "Cruzamentos":
         dash_cruzamento()
     elif opcao_pagina == "Vídeos":
-        trata_video_cruzamentos()
-        trata_video_ruptura()
         video_teste()
     else:
         st.error("Página não encontrada.")
