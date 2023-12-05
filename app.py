@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from funcoes import *
-from moviepy.editor import VideoFileClip
 import os 
 from PIL import Image
 from datetime import date
@@ -14,8 +13,7 @@ from cruzamentos.esboço_campo import *
 from cruzamentos.geral import *
 from cruzamentos.graficos_cruzamentos import *
 import json 
-from pydub import AudioSegment
-from pydub.playback import play
+from IPython.display import HTML
 
 # Cruzamentos
 # st.set_page_config(layout="wide")
@@ -210,32 +208,6 @@ def trata_video_cruzamentos(data_cruzamentos):
         tempo_video_cruzamentos[numero_cruzamento] = (inicio_video,final_video)
         numero_cruzamento += 1
     return tempo_video_cruzamentos
-
-def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
-    
-    if not os.path.exists(pasta_saida):
-        os.makedirs(f"{pasta_saida}")
-
-    for numero_clipe, (inicio, fim) in tempos_clipes.items():
-        nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}_{pasta_saida}.mp4")
-
-
-        if not os.path.exists(nome_arquivo_saida):
-            print(f"Cortando clipe {numero_clipe}_{pasta_saida}...")
-            cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida)
-        else:
-            print(f"Arquivo {nome_arquivo_saida} já existe. Pulando...")
-
-def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
-
-    video = VideoFileClip(arquivo_video)
-
-    video_cortado = video.subclip(inicio, fim)
-
-    video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
-
-
-from IPython.display import HTML
 
 def video_teste():
     st.title("Colocando o vídeo teste")
