@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Asap&family=IM+Fell+English+SC&display=swap");
+
+*{
+    font-family: "Asap", sans-serif;
+}
+
+body{
+    align-items: flex;
+}
+
+/* img{
+    width: 20%;
+} */
+
+section.main.st-emotion-cache-uf99v8.ea3mdgi5, span.st-emotion-cache-10trblm.e1nzilvr1, div.element-container.st-emotion-cache-1npgkca.e1f1d6gn3{
+    background-color: white;
+    color: #1A1432;
+    /* width: 105%; */
+}
+
+div.st-emotion-cache-1qzo3rn.e1f1d6gn1{
+    width: 300%;
+}
+
+div.block-container.st-emotion-cache-1y4p8pa.ea3mdgi4{
+    align-items: self-start;
+}
+
+/* div.dvn-scroller.glideDataEditor{ */
+    /* background-color: gray; */
+    /* color: black;
+    background-color: white;
+} */
+
+div.dvn-scroller.glideDataEditor{
+    text-align: right;
+}

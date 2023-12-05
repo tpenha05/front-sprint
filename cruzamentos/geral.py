@@ -5,10 +5,6 @@ from .cruz_funcoes import *
 with open('cruzamentos.json', 'r') as arquivo:
     dados_dict = json.load(arquivo)
 
-
-""" Aqui eu assumo que o primeiro_time sempre será o time 1, separando os cruzamentos do primeiro_time e do RedBull,
-    sabendo que poderia ser qualquer outro time jogando contra o primeiro_time, eu assumo que o segundo_timeersário 
-    é aquele cujo o id é diferente do id primeiro_timemeirense. """
 times = []
 for id_time in dados_dict["time"].keys():
     times.append(id_time)
