@@ -22,7 +22,7 @@ def main():
         st.set_page_config(layout="centered")
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
-        with open('dados/quebra.json', 'r') as f:
+        with open('quebra.json', 'r') as f:
             data = json.load(f)
             time = 'Palmeiras'
             id = '1'
