@@ -8,11 +8,6 @@ from PIL import Image
 from datetime import date
 from time import sleep
 # import streamlit as st
-from cruzamentos.metade_certa import *
-from cruzamentos.cruz_funcoes import *
-from cruzamentos.esboço_campo import *
-from cruzamentos.geral import *
-from cruzamentos.graficos_cruzamentos import *
 from cruzamentos.dashboard import *
 
 # 1- Função principal para o aplicativo
@@ -30,7 +25,7 @@ def main():
         st.set_page_config(layout="wide")
         paginas()
 
-# 2- Vídeo
+# 2- Vídeos
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
         return None
@@ -74,6 +69,9 @@ def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
     video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
 
 def video_teste():
+    with open("design/style/sidebar.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+        
     st.title("Colocando o vídeo teste")
 
     rupturas_disponiveis = [1, 2, 3, 4, 5, 6, 7]  
@@ -235,8 +233,19 @@ def pagina_partidas(partidas):
 
 # 7- Controle de navegação entre as páginas
 def paginas():
-    dados_partidas = partidas()
-    pagina_partidas(dados_partidas)
+    sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
+    st.sidebar.image(sidebar_image, width=200)
+    st.sidebar.subheader("")
+    
+    opcoes = ["Partidas", "Vídeos"]
+    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
+
+    # Carregando a página selecionada
+    if opcao_pagina == "Partidas":
+        dados_partidas = partidas()
+        pagina_partidas(dados_partidas)
+    elif opcao_pagina == "Vídeos":
+        video_teste()
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":

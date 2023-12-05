@@ -25,11 +25,18 @@ def dashboard_cruzamento():
         # time_usuario = segundo_time
         time_usuario_cruzamento = segundo_time_cruzamentos
 
+    st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
+
     # st.subheader("CRUZAMENTOS")
     col1,space, col2 = st.columns([120,15,120])
     with col1:
-        st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
         with st.container():
+            ataque1, space, ataque2 = st.columns([5,1,5])
+            # with ataque1:
+            #     st.write(f"Ataque {nome_primeiro_time}")
+            # with ataque2:
+            #     st.write(f"Ataque {nome_segundo_time}")
+
             st.pyplot(desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time,lado_a,lado_b))
 
         # st.write("---")
