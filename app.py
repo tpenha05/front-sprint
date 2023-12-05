@@ -2,13 +2,19 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from funcoes import *
-from moviepy.editor import VideoFileClip
 import os 
 from PIL import Image
 from datetime import date
 from time import sleep
 # import streamlit as st
+from cruzamentos.metade_certa import *
+from cruzamentos.cruz_funcoes import *
+from cruzamentos.esboço_campo import *
+from cruzamentos.geral import *
+from cruzamentos.graficos_cruzamentos import *
 from cruzamentos.dashboard import *
+import json 
+from IPython.display import HTML
 
 # 1- Função principal para o aplicativo
 def main():
@@ -25,7 +31,13 @@ def main():
         st.set_page_config(layout="wide")
         paginas()
 
-# 2- Vídeos
+# 2- Vídeo
+def pega_dados_videos(path_dado):
+
+    file = open(path_dado)
+    data = json.load(file)
+    return data 
+  
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
         return None
@@ -34,39 +46,43 @@ def converter_tempo_para_segundos(tempo_str):
 
     return horas * 3600 + minutos * 60 + segundos
 
-def trata_video(data_rupturas,click):
+def trata_video_ruptura(data_rupturas):
     
-    df_rupturas = pd.DataFrame(data_rupturas)
+    tempos_rupturas = []
+    for time_id, time_data in data_rupturas["time"].items():
+        rupturas = time_data["rupturas"]
+        for ruptura in rupturas:
+            inicio_ruptura = ruptura["inicio_ruptura"]
+            tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
+            tempos_rupturas.sort()
+
     dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
     numero_ruptura = 1
-    for ruptura_tempo_sec in df_rupturas["inicio_ruptura"]:
-        inicio_video = converter_tempo_para_segundos(ruptura_tempo_sec) - 5
-        final_video = converter_tempo_para_segundos(ruptura_tempo_sec) + 5
+    for ruptura_tempo_sec in tempos_rupturas:
+        inicio_video = ruptura_tempo_sec - 5
+        final_video = ruptura_tempo_sec + 5
         dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
         numero_ruptura += 1
 
-def cortar_clipes(arquivo_video, tempos_clipes, pasta_saida="videos_rupturasPalmeirasxBragantino_12.12.12"):
-    
-    if not os.path.exists(pasta_saida):
-        os.makedirs(f"{pasta_saida}")
+    return dic_tempo_rupturas
 
-    for numero_clipe, (inicio, fim) in tempos_clipes.items():
-        nome_arquivo_saida = os.path.join(pasta_saida, f"ruptura_{numero_clipe}_{pasta_saida}.mp4")
+def trata_video_cruzamentos(data_cruzamentos):
 
+    tempo_video_cruzamentos = {}
+    instantes_cruzamentos = []
 
-        if not os.path.exists(nome_arquivo_saida):
-            print(f"Cortando clipe {numero_clipe}_{pasta_saida}...")
-            cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida)
-        else:
-            print(f"Arquivo {nome_arquivo_saida} já existe. Pulando...")
+    for time_id, time_data in data_cruzamentos['time'].items():
+        for cruzamento in time_data['rupturas']:
+            instantes_cruzamentos.append(cruzamento['instante_cruzamento'])
 
-def cortar_video(arquivo_video, inicio, fim, nome_arquivo_saida):
-
-    video = VideoFileClip(arquivo_video)
-
-    video_cortado = video.subclip(inicio, fim)
-
-    video_cortado.write_videofile(nome_arquivo_saida, codec="libx264")
+    numero_cruzamento = 1 
+    for tempo in instantes_cruzamentos:
+        tempo_segundos = converter_tempo_para_segundos(tempo)
+        inicio_video = tempo_segundos -5 
+        final_video =  tempo_segundos + 5
+        tempo_video_cruzamentos[numero_cruzamento] = (inicio_video,final_video)
+        numero_cruzamento += 1
+    return tempo_video_cruzamentos
 
 def video_teste():
     with open("design/style/sidebar.css") as d:
@@ -74,17 +90,31 @@ def video_teste():
         
     st.title("Colocando o vídeo teste")
 
-    rupturas_disponiveis = [1, 2, 3, 4, 5, 6, 7]  
-    escolha_ruptura = st.selectbox("Escolha o número da ruptura", rupturas_disponiveis)
+    tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
+    tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
 
-    nome_arquivo = f"videos_rupturasPalmeirasxBragantino_12.12.12/ruptura_{escolha_ruptura}_videos_rupturasPalmeirasxBragantino_12.12.12.mp4"
+    st.write(tempos_rupturas)
+    st.write(tempos_cruzamentos)
+    
+    video_dict = st.radio("Selecione o dicionário de vídeo:", ("Rupturas", "Cruzamentos"))
 
-    if os.path.exists(nome_arquivo):
-        video_file = open(nome_arquivo, 'rb')
-        video_bytes = video_file.read()
-        st.video(video_bytes)
+    selected_key = st.selectbox("Selecione a chave do vídeo:", list(tempos_rupturas.keys()) if video_dict == "Rupturas" else list(tempos_cruzamentos.keys()))
+
+    start_time = None
+    if video_dict == "Rupturas" and selected_key in tempos_rupturas:
+        start_time = tempos_rupturas[selected_key][0]
+    elif video_dict == "Cruzamentos" and selected_key in tempos_cruzamentos:
+        start_time = tempos_cruzamentos[selected_key][0]
+
+    if start_time is not None:
+        st.write(f"Tempo inicial selecionado: {start_time}")
+
+        video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
+
+        st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
+        st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
     else:
-        st.error(f"O arquivo {nome_arquivo} não foi encontrado.")
+        st.warning("Chave selecionada não encontrada no dicionário.")
 
 # 3- Dados
 def trata_dados(dados, time, id, tipo):
