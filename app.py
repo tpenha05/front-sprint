@@ -10,6 +10,7 @@ from time import sleep
 from cruzamentos.dashboard import *
 import json 
 from IPython.display import HTML
+from campo_caio import desenhar_campo
 
 # 1- Função principal para o aplicativo
 def main():
@@ -119,24 +120,25 @@ def trata_dados(dados, time, id, tipo):
         dicionario_rupturas = [{}]
         total_rupturas = {}
         total_desfechos = {}
+        contador = 0
+        porcentagem_campo = {}
+        pocentagem_campo_final = []
         for ruptura in dados['time'][id]['rupturas']:
+            
             instante_ruptura = ruptura.get('instante_ruptura', None)
             if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
                 novo_registro = {
-                    "instante_ruptura": instante_ruptura,
+                    "Jogada": contador,
                     "inicio_ruptura": ruptura.get('inicio_ruptura', None),
                     'zona': ruptura.get('zona_defesa', None),
                     'desfecho': ruptura.get('desfecho', None),
                     'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
                 }
                 dicionario_rupturas.append(novo_registro)
-                # Agora dicionario_rupturas deve conter a lista desejada de dicionários
-                # print(dicionario_rupturas)
-            for i in range(len(dicionario_rupturas)):
-                if ruptura['instante_ruptura'] not in dicionario_rupturas[i]:
-                  if ruptura['nome_jogador_ruptura'] not in total_rupturas:
-                    total_rupturas[ruptura['nome_jogador_ruptura']] = 0
-                  total_rupturas[ruptura['nome_jogador_ruptura']] += 1
+            contador += 1 
+            if ruptura['nome_jogador_ruptura'] not in total_rupturas:
+                total_rupturas[ruptura['nome_jogador_ruptura']] = 0
+            total_rupturas[ruptura['nome_jogador_ruptura']] += 1
         #Desfechos Lista  
         
         total_desfechos = dados['time'][id]['desfechos']
@@ -144,11 +146,29 @@ def trata_dados(dados, time, id, tipo):
         df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
         cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
         ######
-        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df,dados)
-
+        zonas = ['Zona 2','Zona 1', 'Zona 1 - B', 'Zona 2 - B' ]
+        for zona in dados['time'][id]['zonas']:
+            if zona in zonas:
+                porcentagem_campo[zona] = dados['time'][id]['zonas'][zona]
+        total = sum(porcentagem_campo.values())
+        porcentagens_zonas = [porcentagem_campo[zona] / total * 100 if zona in porcentagem_campo else 0 for zona in zonas]
+        for zona, porcentagem in zip(zonas, porcentagens_zonas):
+            pocentagem_campo_final.append(f'{zona}')
+            pocentagem_campo_final.append(f'{porcentagem:.2f}%')
+        ##########
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados)
+        filtro_dados(None, None, df)
+def filtro_dados(dicionario_rupturas, total_rupturas, df):
+    #filtro por Desfecho
+    desfecho_especifico = 'Foi desarmado'
+    df_filtrado = df[df['Desfecho'] == desfecho_especifico].copy()
+    porcentagem_restante = 100 - df_filtrado['Porcentagem'].sum()
+    df_outro = pd.DataFrame({'Desfecho': ['Outro'], 'Quantidade': [df_filtrado['Quantidade'].sum()], 'Porcentagem': [porcentagem_restante]})
+    df_final = pd.concat([df_filtrado, df_outro], ignore_index=True)
+    print(df_final)
 
 # 4- DashBoards
-def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos,dados):
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
 
     with open("design/style/dashboard.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
@@ -172,11 +192,19 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
             st.header("Geral")
             fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
             st.plotly_chart(fig)
-            st.dataframe(df_desfechos) 
-            
+            st.write('Quantidade de desfechos por jogador')
+            st.dataframe(df_desfechos, width=500)
+
         with col2:
-            st.dataframe(df_rupturas) 
-            pass
+            quantidade = []
+            for i in range(len(df_rupturas)-1):
+                quantidade.append(i)
+            st.dataframe(df_rupturas)
+            jogada = st.selectbox('Selecione uma jogada',quantidade)
+            st.write('You selected:', jogada)
+            figura = desenhar_campo(lista_porcentagem)
+            st.pyplot(figura)
+
 
     with tab2:
         dashboard_cruzamento()
