@@ -142,11 +142,11 @@ def trata_dados(dados, time, id, tipo):
         df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
         cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
         ######
-        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df)
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df,dados)
 
 
 # 4- DashBoards
-def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos):
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos,dados):
 
     with open("design/style/dashboard.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
@@ -158,6 +158,13 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
 
     with tab1:
             # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+        json_rupturas = json.dumps(dados,indent=4,separators=(',', ': ')).encode('utf-8')
+        st.download_button(
+        label= "Baixar Rupturas",
+        data = json_rupturas,
+        file_name = "rupturas.json",
+        mime="application/json"
+    )
         col1, col2 = st.columns(2)
         with col1:
             st.header("Geral")
