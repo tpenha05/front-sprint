@@ -204,7 +204,7 @@ def login_cadastro():
             if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:
                 st.session_state['clube'] = clube_input
             
-            response = login(email, senha)
+            response = login(email, senha, clube_input)
             if response.ok:
                 st.success("Login bem-sucedido!")
                 sleep(0.5)
@@ -221,6 +221,9 @@ def pagina_partidas(partidas):
 
     with open("design/style/sidebar.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+
+    image = Image.open('design/photos/logo.webp')
+    st.image(image)
 
     if 'clube' in st.session_state:
         clube_usuario = st.session_state['clube']
