@@ -6,11 +6,11 @@ import os
 from PIL import Image
 from datetime import date
 from time import sleep
-# import streamlit as st
 from cruzamentos.dashboard import *
 import json 
 from IPython.display import HTML
-from campo_caio import desenhar_campo
+from rupturas.campo_caio import *
+from rupturas.dashboard import *
 
 # 1- Função principal para o aplicativo
 def main():
@@ -156,8 +156,9 @@ def trata_dados(dados, time, id, tipo):
             pocentagem_campo_final.append(f'{zona}')
             pocentagem_campo_final.append(f'{porcentagem:.2f}%')
         ##########
-        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados)
+        dashboards(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados)
         filtro_dados(None, None, df)
+
 def filtro_dados(dicionario_rupturas, total_rupturas, df):
     #filtro por Desfecho
     desfecho_especifico = 'Foi desarmado'
@@ -168,7 +169,7 @@ def filtro_dados(dicionario_rupturas, total_rupturas, df):
     print(df_final)
 
 # 4- DashBoards
-def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
+def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
 
     with open("design/style/dashboard.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
@@ -176,35 +177,11 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     if st.button("Voltar"):
         st.session_state['ir_para_analise'] = False
         st.rerun()
+
     tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
 
     with tab1:
-            # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
-        json_rupturas = json.dumps(dados,indent=4,separators=(',', ': ')).encode('utf-8')
-        st.download_button(
-        label= "Baixar Rupturas",
-        data = json_rupturas,
-        file_name = "rupturas.json",
-        mime="application/json"
-    )
-        col1, col2 = st.columns(2)
-        with col1:
-            st.header("Geral")
-            fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-            st.plotly_chart(fig)
-            st.write('Quantidade de desfechos por jogador')
-            st.dataframe(df_desfechos, width=500)
-
-        with col2:
-            quantidade = []
-            for i in range(len(df_rupturas)-1):
-                quantidade.append(i)
-            st.dataframe(df_rupturas)
-            jogada = st.selectbox('Selecione uma jogada',quantidade)
-            st.write('You selected:', jogada)
-            figura = desenhar_campo(lista_porcentagem)
-            st.pyplot(figura)
-
+        dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados)
 
     with tab2:
         dashboard_cruzamento()

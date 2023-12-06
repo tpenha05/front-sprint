@@ -37,15 +37,9 @@ def dashboard_cruzamento():
         file_name="cruzamentos.json",
         mime="application/json",
     )
-    col1,space, col2 = st.columns([120,15,120])
+    col1, space, col2 = st.columns([120,15,120])
     with col1:
         with st.container():
-            ataque1, space, ataque2 = st.columns([5,1,5])
-            # with ataque1:
-            #     st.write(f"Ataque {nome_primeiro_time}")
-            # with ataque2:
-            #     st.write(f"Ataque {nome_segundo_time}")
-
             st.pyplot(desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time,lado_a,lado_b))
 
         # st.write("---")
@@ -100,7 +94,6 @@ def dashboard_cruzamento():
             lista_id.append(f"Cruzamento {id + 1}")
         tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
 
-        st.write("---")
         st.subheader("Seleção de Cruzamento")
 
         # Lista para seleção do cruzamento
