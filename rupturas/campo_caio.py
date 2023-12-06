@@ -13,12 +13,15 @@ def desenhar_campo(Lista_porcentagem=None):
     altura_campo = 60
 
     # Desenhando o campo de futebol com a cor verde
-    retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='black', facecolor='green')
+    retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='black', facecolor='#529F40')
     ax.add_patch(retangulo_campo)
+
+    retangulo_central = patches.Rectangle(((largura_campo/5)*2, 0), largura_campo/5, altura_campo, linewidth=2, edgecolor='black', facecolor='#62ba17')
+    ax.add_patch(retangulo_central)
 
     # Dividindo o campo em 5 partes com linhas verticais
     for i in range(1, 5):
-        plt.plot([i * largura_campo / 5, i * largura_campo / 5], [0, altura_campo], color='purple')
+        plt.plot([i * largura_campo / 5, i * largura_campo / 5], [0, altura_campo], color='black')
 
     circulo_central = patches.Circle((largura_campo/2, altura_campo/2), radius=5, edgecolor="white", facecolor='none')
     ax.add_patch(circulo_central)
@@ -30,14 +33,14 @@ def desenhar_campo(Lista_porcentagem=None):
     linha.set_facecolor('white')
     ax.add_patch(linha)
 
-
     # Adicionando retângulos representando as áreas do campo
     altura_area = altura_campo / 2.5  # Ajuste para um meio-termo
-    area_lado_esquerdo = patches.Rectangle((0, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
-    area_goleiro_esquerdo = patches.Rectangle((0,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
+    
+    area_lado_esquerdo = patches.Rectangle((-5, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
+    area_goleiro_esquerdo = patches.Rectangle((-1,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
 
-    area_lado_direito = patches.Rectangle((largura_campo - largura_campo / 5, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
-    area_goleiro_direito = patches.Rectangle((93,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
+    area_lado_direito = patches.Rectangle(((largura_campo - largura_campo / 5)*1.08, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
+    area_goleiro_direito = patches.Rectangle((95,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
 
 
     plt.text(7, 50, f"{Lista_porcentagem[2]}", fontsize=10, color='White') #cor da escrita "Área"
