@@ -11,8 +11,12 @@ def desenhar_campo():
     altura_campo = 60
 
     # Desenhando o campo de futebol com a cor verde
-    retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='green', facecolor='green')
+    retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='black', facecolor='green')
     ax.add_patch(retangulo_campo)
+
+
+
+
 
     # Dividindo o campo em 5 partes com linhas verticais
     for i in range(1, 5):
@@ -27,14 +31,31 @@ def desenhar_campo():
     circulo = patches.Circle((meio_campo, altura_campo / 2), raio_circulo, edgecolor='white', facecolor='none', linewidth=2)
     ax.add_patch(circulo)
 
+    raio_circulo = 0.5
+    circulo = patches.Circle((meio_campo, altura_campo / 2), raio_circulo, edgecolor='white', facecolor='none', linewidth=2)
+    ax.add_patch(circulo)
+
+    raio_circulo = 0.5
+    circulo = patches.Circle((85, altura_campo / 2), raio_circulo, edgecolor='white', facecolor='none', linewidth=2)
+    ax.add_patch(circulo)
+
+    raio_circulo = 0.5
+    circulo = patches.Circle((15, altura_campo / 2), raio_circulo, edgecolor='white', facecolor='none', linewidth=2)
+    ax.add_patch(circulo)
+
+
     # Adicionando retângulos representando as áreas do campo
     altura_area = altura_campo / 2.5  # Ajuste para um meio-termo
     area_lado_esquerdo = patches.Rectangle((0, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
+    area_goleiro_esquerdo = patches.Rectangle((0,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
+
     area_lado_direito = patches.Rectangle((largura_campo - largura_campo / 5, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
+    area_goleiro_direito = patches.Rectangle((93,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
+
 
     plt.text(8, 50, "1.B", fontsize=10, color='White') #cor da escrita "Área"
     plt.text(28, 50, "1.A", fontsize=10, color='White') #cor da escrita "Área"
-    plt.text(50, 50, "2", fontsize=10, color='White') #cor da escrita "Área"
+    plt.text(50, 50, "2", fontsize=10, color='black') #cor da escrita "Área"
     plt.text(68, 50, "3.A", fontsize=10, color='White') #cor da escrita "Área"
     plt.text(88, 50, "Área", fontsize=10, color='White') #cor da escrita "Área"
 
@@ -42,15 +63,19 @@ def desenhar_campo():
     #só tirar a "porcentagem" e colocar a porcentagem respectiva da àrea!!!!!
     plt.text(2, 45, f"porcentagem", fontsize=10, color='White') #cor da escrita "Área"
     plt.text(22, 45, f"porcentagem", fontsize=10, color='White') #cor da escrita "Área"
-    plt.text(42, 45, f"porcentagem", fontsize=10, color='White') #cor da escrita "Área"
+    plt.text(42, 45, f"porcentagem", fontsize=10, color='black') #cor da escrita "Área"
     plt.text(62, 45, f"porcentagem", fontsize=10, color='White') #cor da escrita "Área"
     plt.text(82, 45, f"porcentagem", fontsize=10, color='White') #cor da escrita "Área"
 
 
+    
 
 
     ax.add_patch(area_lado_esquerdo)
+    ax.add_patch(area_goleiro_esquerdo)
+
     ax.add_patch(area_lado_direito)
+    ax.add_patch(area_goleiro_direito)
 
     # Configurações do gráfico
     plt.xlim(-5, largura_campo + 5)
