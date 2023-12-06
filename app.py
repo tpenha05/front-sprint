@@ -47,10 +47,11 @@ def trata_video_ruptura(data_rupturas):
     tempos_rupturas = []
     for time_id, time_data in data_rupturas["time"].items():
         rupturas = time_data["rupturas"]
-        for ruptura in rupturas:
-            inicio_ruptura = ruptura["inicio_ruptura"]
-            tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
-            tempos_rupturas.sort()
+        if time_id == "1":
+            for ruptura in rupturas:
+                inicio_ruptura = ruptura["inicio_ruptura"]
+                tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
+                tempos_rupturas.sort()
 
     dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
     numero_ruptura = 1
@@ -69,7 +70,8 @@ def trata_video_cruzamentos(data_cruzamentos):
 
     for time_id, time_data in data_cruzamentos['time'].items():
         for cruzamento in time_data['rupturas']:
-            instantes_cruzamentos.append(cruzamento['instante_cruzamento'])
+            if time_id == "1":
+                instantes_cruzamentos.append(cruzamento['instante_cruzamento'])
 
     numero_cruzamento = 1 
     for tempo in instantes_cruzamentos:
@@ -154,7 +156,7 @@ def trata_dados(dados, time, id, tipo):
             pocentagem_campo_final.append(f'{zona}')
             pocentagem_campo_final.append(f'{porcentagem:.2f}%')
         ##########
-        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df,pocentagem_campo_final)
+        dashboard_quebra(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados)
         filtro_dados(None, None, df)
 def filtro_dados(dicionario_rupturas, total_rupturas, df):
     #filtro por Desfecho
@@ -166,7 +168,7 @@ def filtro_dados(dicionario_rupturas, total_rupturas, df):
     print(df_final)
 
 # 4- DashBoards
-def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem):
+def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
 
     with open("design/style/dashboard.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
@@ -178,6 +180,13 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
 
     with tab1:
             # Gráfico de pizza interativo usando Plotly Express com cores personalizadas
+        json_rupturas = json.dumps(dados,indent=4,separators=(',', ': ')).encode('utf-8')
+        st.download_button(
+        label= "Baixar Rupturas",
+        data = json_rupturas,
+        file_name = "rupturas.json",
+        mime="application/json"
+    )
         col1, col2 = st.columns(2)
         with col1:
             st.header("Geral")
@@ -242,6 +251,9 @@ def pagina_partidas(partidas):
 
     with open("design/style/sidebar.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+
+    image = Image.open('design/photos/logo.webp')
+    st.image(image)
 
     if 'clube' in st.session_state:
         clube_usuario = st.session_state['clube']

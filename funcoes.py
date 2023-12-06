@@ -12,7 +12,7 @@ def cadastra_usuario(email, senha, clube):
     return response
 
 def login(email, senha, clube):
-    payload = {"email": email, "senha": senha, 'clube': clube}
+    payload = {"email": email, "senha": senha, "clube": clube}
     response = requests.post(f"{url}/login", json=payload)
     global id_user_atual
     if 'usuario' in response.headers:

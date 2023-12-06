@@ -12,6 +12,8 @@ from .cruz_funcoes import *
 from .esboço_campo import *
 from .geral import *
 from .graficos_cruzamentos import *
+from app import trata_video_cruzamentos, pega_dados_videos
+from IPython.display import HTML
 
 def dashboard_cruzamento():
     with open("design/style/cruzamento.css") as d:
@@ -28,6 +30,13 @@ def dashboard_cruzamento():
     st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
 
     # st.subheader("CRUZAMENTOS")
+    json_cruz = json.dumps(dados_dict, indent=4, separators=(',', ': '))
+    st.download_button(
+        label="Baixar Cruzamentos",
+        data=json_cruz,
+        file_name="cruzamentos.json",
+        mime="application/json",
+    )
     col1,space, col2 = st.columns([120,15,120])
     with col1:
         with st.container():
@@ -89,25 +98,36 @@ def dashboard_cruzamento():
         tempo = []
         for id in range(len(time_usuario_cruzamento)):
             lista_id.append(f"Cruzamento {id + 1}")
+        tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
 
-        opcao_selecionada = st.selectbox('Selecione uma opção', lista_id)
+        st.write("---")
+        st.subheader("Seleção de Cruzamento")
+
+        # Lista para seleção do cruzamento
+        lista_id = [f"Cruzamento {id+1}" for id in range(len(time_usuario_cruzamento))]
+        opcao_selecionada = st.selectbox('', lista_id)
         opcao_selecionada = opcao_selecionada.split(" ")
-        id = int(opcao_selecionada[1]) -1
-        st.write("---")
-        
-        with st.container():
-            col_um, col_dois = st.columns(2)
-            with col_um:
-                desfecho = time_usuario_cruzamento[id]["desfecho"]
-                st.markdown(f"**Desfecho:** {desfecho}")
-                
-            with col_dois:
-                tempo_de_jogo = time_usuario_cruzamento[id]["instante_cruzamento"]
-                st.markdown(f"**Tempo de jogo:** {tempo_de_jogo}")
-            
+        id = int(opcao_selecionada[1]) -1 
+
         st.write("---")
 
-        
+        # Verifica se o cruzamento selecionado existe nos tempos dos vídeos
+        if (id+1) in (tempos_cruzamentos):
+            start_time = tempos_cruzamentos[id+1][0]
+            desfecho = time_usuario_cruzamento[id]["desfecho"]
+            st.markdown(f"**Desfecho:** {desfecho}")   
+            tempo_de_jogo = time_usuario_cruzamento[id]["instante_cruzamento"]
+            st.markdown(f"**Tempo de jogo:** {tempo_de_jogo}")
+
+            # URL do vídeo com o tempo de início especificado
+            video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
+
+            st.write("---")
+            st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
+        else:
+            st.warning("Vídeo de cruzamento selecionado não encontrado.")
+
+        st.write("---")
         coluna1, coluna2, coluna3 = st.columns([1,1,1.8])
         with st.container():
 
