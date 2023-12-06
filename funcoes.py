@@ -6,13 +6,13 @@ import requests
 # URL do servidor Flask
 url = "http://127.0.0.1:5000"
 
-def cadastra_usuario(email, senha, time):
-    payload = {"email": email, "senha": senha, "clube": time}
+def cadastra_usuario(email, senha, clube):
+    payload = {"email": email, "senha": senha, "clube": clube}
     response = requests.post(f"{url}/cadastro", json=payload)
     return response
 
-def login(email, senha):
-    payload = {"email": email, "senha": senha}
+def login(email, senha, clube):
+    payload = {"email": email, "senha": senha, "clube": clube}
     response = requests.post(f"{url}/login", json=payload)
     global id_user_atual
     if 'usuario' in response.headers:
