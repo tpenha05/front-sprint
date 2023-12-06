@@ -46,10 +46,11 @@ def trata_video_ruptura(data_rupturas):
     tempos_rupturas = []
     for time_id, time_data in data_rupturas["time"].items():
         rupturas = time_data["rupturas"]
-        for ruptura in rupturas:
-            inicio_ruptura = ruptura["inicio_ruptura"]
-            tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
-            tempos_rupturas.sort()
+        if time_id == "1":
+            for ruptura in rupturas:
+                inicio_ruptura = ruptura["inicio_ruptura"]
+                tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
+                tempos_rupturas.sort()
 
     dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
     numero_ruptura = 1
@@ -68,7 +69,8 @@ def trata_video_cruzamentos(data_cruzamentos):
 
     for time_id, time_data in data_cruzamentos['time'].items():
         for cruzamento in time_data['rupturas']:
-            instantes_cruzamentos.append(cruzamento['instante_cruzamento'])
+            if time_id == "1":
+                instantes_cruzamentos.append(cruzamento['instante_cruzamento'])
 
     numero_cruzamento = 1 
     for tempo in instantes_cruzamentos:
