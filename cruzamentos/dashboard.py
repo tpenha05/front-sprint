@@ -27,8 +27,6 @@ def dashboard_cruzamento():
         # time_usuario = segundo_time
         time_usuario_cruzamento = segundo_time_cruzamentos
 
-    st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
-
     # st.subheader("CRUZAMENTOS")
     json_cruz = json.dumps(dados_dict, indent=4, separators=(',', ': '))
     st.download_button(

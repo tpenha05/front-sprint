@@ -178,6 +178,8 @@ def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfech
         st.session_state['ir_para_analise'] = False
         st.rerun()
 
+    st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
+
     tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
 
     with tab1:

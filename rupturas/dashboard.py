@@ -8,8 +8,6 @@ from rupturas.campo_caio import *
 
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
 
-    st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
-
     json_rupturas = json.dumps(dados,indent=4,separators=(',', ': ')).encode('utf-8')
     st.download_button(
     label= "Baixar Rupturas",
