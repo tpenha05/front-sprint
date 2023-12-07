@@ -39,28 +39,31 @@ def desenhar_campo(Lista_porcentagem=None):
     area_lado_esquerdo = patches.Rectangle((-5, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
     area_goleiro_esquerdo = patches.Rectangle((-1,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
 
-    area_lado_direito = patches.Rectangle(((largura_campo - largura_campo / 5)*1.08, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
-    area_goleiro_direito = patches.Rectangle((95,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
+    area_lado_direito = patches.Rectangle(((largura_campo - largura_campo / 5)*1.06, altura_campo / 2 - altura_area / 2), largura_campo / 5, altura_area, linewidth=2, edgecolor='white', facecolor='none')
+    area_goleiro_direito = patches.Rectangle((94.2,22), largura_campo / 14, 16, linewidth=2, edgecolor='white', facecolor='none')
 
+    plt.text(6.5, 50, f"{Lista_porcentagem[2]}", fontsize=10, color='White') 
+    plt.text(24, 50, f"{Lista_porcentagem[4]}", fontsize=10, color='White') 
+    plt.text(50, 50,f"", fontsize=10, color='black') 
 
-    plt.text(7, 50, f"{Lista_porcentagem[2]}", fontsize=10, color='White') #cor da escrita "Área"
-    plt.text(26, 50, f"{Lista_porcentagem[4]}", fontsize=10, color='White') #cor da escrita "Área"
-    plt.text(50, 50,f"", fontsize=10, color='black') #cor da escrita "Área"
-    plt.text(66, 50, f"{Lista_porcentagem[0]}", fontsize=10, color='White') #cor da escrita "Área"
-    plt.text(86, 50, f"{Lista_porcentagem[6]}", fontsize=10, color='White') #cor da escrita "Área"
-
+    plt.text(66, 50, f"{Lista_porcentagem[0]}", fontsize=10, color='White') 
+    plt.text(84, 50, f"{Lista_porcentagem[6]}", fontsize=10, color='White')
     
-    #só tirar a "porcentagem" e colocar a porcentagem respectiva da àrea!!!!!
-    plt.text(2, 45, f"  {Lista_porcentagem[1]}", fontsize=14, color='White') #cor da escrita "Área"
-    plt.text(22, 45, f"  {Lista_porcentagem[3]}", fontsize=14, color='White') #cor da escrita "Área"
-    plt.text(42, 45, f" ", fontsize=14, color='black') #cor da escrita "Área"
-    plt.text(62, 45, f"  {Lista_porcentagem[5]}", fontsize=14, color='White') #cor da escrita "Área"
-    plt.text(82, 45, f"  {Lista_porcentagem[7]}", fontsize=14, color='White') #cor da escrita "Área"
+
+    plt.text(2, 45, f"  {Lista_porcentagem[1]}", fontsize=14, color='White') 
+    plt.text(22, 45, f"  {Lista_porcentagem[3]}", fontsize=14, color='White') 
+    plt.text(42, 45, f" ", fontsize=14, color='black') 
+    
+    plt.text(62, 45, f"  {Lista_porcentagem[5]}", fontsize=14, color='White') 
+    plt.text(82, 45, f"  {Lista_porcentagem[7]}", fontsize=14, color='White') 
 
     ax.add_patch(area_lado_esquerdo)
     ax.add_patch(area_goleiro_esquerdo)
     ax.add_patch(area_lado_direito)
     ax.add_patch(area_goleiro_direito)
+
+    retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='black', facecolor='none')
+    ax.add_patch(retangulo_campo)
 
     # Configurações do gráfico
     plt.xlim(-5, largura_campo + 5)

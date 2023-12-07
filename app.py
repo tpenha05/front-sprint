@@ -203,11 +203,9 @@ def login_cadastro():
 
     with col3:
         st.header("Login")
-        email = st.text_input("E-mail:", key="login_email")
-        senha = st.text_input("Senha:", type='password', key="login_password")
-        
-        # Use uma chave diferente para o text_input e o session_state
-        clube_input = st.text_input("Clube:", key="clube_input")
+        email = st.text_input("E-mail:", key="login_email", placeholder="Insira seu e-mail")
+        senha = st.text_input("Senha:", type='password', key="login_password", placeholder="Insira sua senha")
+        clube_input = st.text_input("Clube:", key="clube_input", placeholder="Insira seu clube")
 
         if st.button("Login"):
             if 'clube' not in st.session_state or st.session_state['clube'] != clube_input:

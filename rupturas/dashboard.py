@@ -7,6 +7,8 @@ import json
 from rupturas.campo_caio import *
 
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
+    with open("design/style/rupturas.css") as d:
+        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
 
     json_rupturas = json.dumps(dados,indent=4,separators=(',', ': ')).encode('utf-8')
     st.download_button(
@@ -16,7 +18,7 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     mime="application/json"
     )
 
-    col1, col2 = st.columns([1,1])
+    col1, space, col2 = st.columns([8,1,8])
     with col1:
         figura = desenhar_campo(lista_porcentagem)
         st.pyplot(figura)
@@ -33,6 +35,8 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
         quantidade = []
         for i in range(len(df_rupturas)-1):
             quantidade.append(i)
+        st.subheader("Seleção de Rupturas")
+        jogada = st.selectbox('',quantidade)
+        st.write("---")
         st.dataframe(df_rupturas)
-        jogada = st.selectbox('Selecione uma jogada',quantidade)
         # st.write('You selected:', jogada)
