@@ -21,7 +21,6 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     # Desenhando o campo de futebol
     # campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, color='#62ba17')
     retangulo_campo = patches.Rectangle((0, 0), largura_campo, altura_campo, linewidth=2, edgecolor='black', facecolor='none')
-#  color='#62ba17'
     largura_quad = largura_campo / 9
     altura_quad = altura_campo / 6
 
@@ -52,7 +51,6 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     linha.set_facecolor('white')
     ax.add_patch(linha)
 
-
     #quadrados do Campo, Lado A
     for parte in lado_a:
         retangulo_destaque = faz_quadrado(largura_campo,altura_campo,lado_a[parte])
@@ -81,7 +79,3 @@ def desenhar_campo_com_quadrado(porcentagem_pal, porcentagem_adv, lado_a, lado_b
     plt.axis('off')
 
     return fig
-
-# Exibindo o campo de futebol com o quadrado abrangente no Streamlit
-    # figura = desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time, lado_a, lado_b)
-    # st.pyplot(figura)

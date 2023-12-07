@@ -27,8 +27,6 @@ def dashboard_cruzamento():
         # time_usuario = segundo_time
         time_usuario_cruzamento = segundo_time_cruzamentos
 
-    st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
-
     # st.subheader("CRUZAMENTOS")
     json_cruz = json.dumps(dados_dict, indent=4, separators=(',', ': '))
     st.download_button(
@@ -37,15 +35,9 @@ def dashboard_cruzamento():
         file_name="cruzamentos.json",
         mime="application/json",
     )
-    col1,space, col2 = st.columns([120,15,120])
+    col1, space, col2 = st.columns([8,1,8])
     with col1:
         with st.container():
-            ataque1, space, ataque2 = st.columns([5,1,5])
-            # with ataque1:
-            #     st.write(f"Ataque {nome_primeiro_time}")
-            # with ataque2:
-            #     st.write(f"Ataque {nome_segundo_time}")
-
             st.pyplot(desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time,lado_a,lado_b))
 
         # st.write("---")
@@ -100,8 +92,7 @@ def dashboard_cruzamento():
             lista_id.append(f"Cruzamento {id + 1}")
         tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
 
-        st.write("---")
-        st.subheader("Seleção de Cruzamento")
+        st.subheader("Seleção de Cruzamentos")
 
         # Lista para seleção do cruzamento
         lista_id = [f"Cruzamento {id+1}" for id in range(len(time_usuario_cruzamento))]
