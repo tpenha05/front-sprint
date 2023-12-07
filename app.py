@@ -82,38 +82,6 @@ def trata_video_cruzamentos(data_cruzamentos):
         numero_cruzamento += 1
     return tempo_video_cruzamentos
 
-def video_teste():
-    with open("design/style/sidebar.css") as d:
-        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-        
-    st.title("Colocando o vídeo teste")
-
-    tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
-    tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
-
-    st.write(tempos_rupturas)
-    st.write(tempos_cruzamentos)
-    
-    video_dict = st.radio("Selecione o dicionário de vídeo:", ("Rupturas", "Cruzamentos"))
-
-    selected_key = st.selectbox("Selecione a chave do vídeo:", list(tempos_rupturas.keys()) if video_dict == "Rupturas" else list(tempos_cruzamentos.keys()))
-
-    start_time = None
-    if video_dict == "Rupturas" and selected_key in tempos_rupturas:
-        start_time = tempos_rupturas[selected_key][0]
-    elif video_dict == "Cruzamentos" and selected_key in tempos_cruzamentos:
-        start_time = tempos_cruzamentos[selected_key][0]
-
-    if start_time is not None:
-        st.write(f"Tempo inicial selecionado: {start_time}")
-
-        video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
-
-        st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
-        st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
-    else:
-        st.warning("Chave selecionada não encontrada no dicionário.")
-
 # 3- Dados
 def trata_dados(dados, time, id, tipo):
     #jogadores numero de rupturas
@@ -286,8 +254,6 @@ def paginas():
     if opcao_pagina == "Partidas":
         dados_partidas = partidas()
         pagina_partidas(dados_partidas)
-    elif opcao_pagina == "Vídeos":
-        video_teste()
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":

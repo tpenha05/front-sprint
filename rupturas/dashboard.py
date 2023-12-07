@@ -41,7 +41,7 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
 
         tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
 
-        jogada = st.selectbox('',quantidade)
+        jogada = st.selectbox('',quantidade,key=quantidade)
         st.write("---")
         st.dataframe(df_rupturas)
         # st.write('You selected:', jogada)
@@ -60,9 +60,3 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
         else:
             st.warning("Chave selecionada não encontrada no dicionário.")
 
-
-
-        jogada = st.selectbox('',quantidade)
-        st.write("---")
-        st.dataframe(df_rupturas)
-        # st.write('You selected:', jogada)
