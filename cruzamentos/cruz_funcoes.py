@@ -59,8 +59,8 @@ def pega_tempo_cruzamento(cruzamento):
 
 def lista_jogadores(lista_dos_jogadores,cruzamento):
     jogadores_ataque = cruzamento["nome_jogadores_time_cruzando"]
-    lista_jogadores_ataque = jogadores_ataque.replace(" ", "").split(",")
+    lista_jogadores_ataque = jogadores_ataque.split(",")
     for jogador in lista_jogadores_ataque:
         if jogador not in lista_dos_jogadores:
-            lista_dos_jogadores.append(jogador)
+            lista_dos_jogadores.append(jogador.strip())
     return lista_dos_jogadores
