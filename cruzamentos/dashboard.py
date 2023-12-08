@@ -84,59 +84,117 @@ def dashboard_cruzamento():
 
     with col2:
 
-        #Caixa para selecionar o cruzamento, pegando o id do cruzamento, sendo ele (id-1)
-        lista_id = []
-        desfecho = []
-        tempo = []
-        for id in range(len(time_usuario_cruzamento)):
-            lista_id.append(f"Cruzamento {id + 1}")
-        tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
+        tab_time1, tab_time2 = st.tabs([f"{nome_primeiro_time}", f"{nome_segundo_time}"])
 
-        st.subheader("Seleção de Cruzamentos")
+    with tab_time1:
+        with st.expander("Filtros"):
+            col1, col2 = st.columns(2)
+            with col1:
+                Zona_1 = st.selectbox('Filtro por zona', zona_time_1)
+                filtro["zonas"] = Zona_1
 
-        # Lista para seleção do cruzamento
-        lista_id = [f"Cruzamento {id+1}" for id in range(len(time_usuario_cruzamento))]
-        opcao_selecionada = st.selectbox('', lista_id)
-        opcao_selecionada = opcao_selecionada.split(" ")
-        id = int(opcao_selecionada[1]) -1 
+                jogador_time_1 = st.selectbox('Filtro por jogador primeiro time', jogadores_1)
+                filtro["jogador"] = jogador_time_1
+
+                desfechos_1 = st.selectbox('Filtro por desfecho primeiro time', desfechos)
+                filtro["desfecho"] = desfechos_1
+
+            cruzamentos_1 = primeiro_time_cruzamentos
+            if (filtro["zonas"] != "Selecionar") or (filtro["jogador"] != "Selecionar") or (filtro["desfecho"]) != "Selecionar":
+                cruz_filtrado = []
+                for i in range(len(cruzamentos_1)):
+                    if (filtro["zonas"] in cruzamentos_1[i]["zona"]) or (filtro["jogador"] in cruzamentos_1[i]["nome_jogadores_time_cruzando"]) or (filtro["desfecho"] in cruzamentos_1[i]["desfecho"]):
+                        cruz_filtrado.append(cruzamentos_1[i])
+                cruzamentos = cruz_filtrado
+
+            else:
+                cruzamentos = primeiro_time_cruzamentos
+
+        funcao_exibe_dados_cruzamento(cruzamentos)
+
+
+    with tab_time2:
+        with st.expander("Filtros"):
+            col1, col2 = st.columns(2)
+            with col1:
+                Zona_2 = st.selectbox('Filtro por zona time', zona_time_2)
+                filtro["zonas"] = Zona_2
+
+                jogador_time_2 = st.selectbox('Filtro por jogador segundo time', jogadores_time2)
+                filtro["jogador"] = jogador_time_2
+
+            with col2:
+                desfechos_2 = st.selectbox('Filtro por desfecho segundo time', desfechos)
+                filtro["desfecho"] = desfechos_2
+
+            cruzamentos_2 = segundo_time_cruzamentos
+            if (filtro["zonas"] != "Selecionar") or (filtro["jogador"] != "Selecionar") or (filtro["desfecho"]) != "Selecionar":
+                cruz_filtrado = []
+                    
+                for i in range(len(cruzamentos_2)):
+                    if (filtro["zonas"] in cruzamentos_2[i]["zona"]) or (filtro["jogador"] in cruzamentos_2[i]["nome_jogadores_time_cruzando"]) or (filtro["desfecho"] in cruzamentos_2[i]["desfecho"]):
+                        cruz_filtrado.append(cruzamentos_2[i])
+                cruzamentos = cruz_filtrado
+                
+            else: 
+                cruzamentos = segundo_time_cruzamentos
+        funcao_exibe_dados_cruzamento(cruzamentos)
+
+        
+def funcao_exibe_dados_cruzamento(cruzamentos):
+    #Caixa para selecionar o cruzamento, pegando o id do cruzamento, sendo ele (id-1)
+    lista_id = []
+    desfecho = []
+    tempo = []
+    for id in range(len(cruzamentos)):
+        lista_id.append(f"Cruzamento {id + 1}")
+    tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
+
+    st.subheader("Seleção de Cruzamentos")
+
+    # Lista para seleção do cruzamento
+    lista_id = [f"Cruzamento {id+1}" for id in range(len(cruzamentos))]
+    opcao_selecionada = st.selectbox('', lista_id)
+    opcao_selecionada = opcao_selecionada.split(" ")
+    id = int(opcao_selecionada[1]) -1 
+
+    st.write("---")
+
+    # Verifica se o cruzamento selecionado existe nos tempos dos vídeos
+    if (id+1) in (tempos_cruzamentos):
+        start_time = tempos_cruzamentos[id+1][0]
+        desfecho = cruzamentos[id]["desfecho"]
+        st.markdown(f"**Desfecho:** {desfecho}")   
+        tempo_de_jogo = cruzamentos[id]["instante_cruzamento"]
+        st.markdown(f"**Tempo de jogo:** {tempo_de_jogo}")
+
+        # URL do vídeo com o tempo de início especificado
+        video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
 
         st.write("---")
+        st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
+    else:
+        st.warning("Vídeo de cruzamento selecionado não encontrado.")
 
-        # Verifica se o cruzamento selecionado existe nos tempos dos vídeos
-        if (id+1) in (tempos_cruzamentos):
-            start_time = tempos_cruzamentos[id+1][0]
-            desfecho = time_usuario_cruzamento[id]["desfecho"]
-            st.markdown(f"**Desfecho:** {desfecho}")   
-            tempo_de_jogo = time_usuario_cruzamento[id]["instante_cruzamento"]
-            st.markdown(f"**Tempo de jogo:** {tempo_de_jogo}")
+    st.write("---")
+    coluna1, coluna2, coluna3 = st.columns([1,1,1.8])
+    with st.container():
 
-            # URL do vídeo com o tempo de início especificado
-            video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
+        with coluna1:
+            #jogadores ataque
+            st.write("**Atacando:**")
+            for jogador in jogadores_ataque(cruzamentos[id]):
+                st.markdown(f"{jogador}")
 
-            st.write("---")
-            st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
-        else:
-            st.warning("Vídeo de cruzamento selecionado não encontrado.")
+        with coluna2:
+            #jogadores Defesa
+            st.write("**Defendendo:**")
+            for jogador in jogadores_defesa(cruzamentos[id]):
+                st.markdown(f"{jogador}")
 
-        st.write("---")
-        coluna1, coluna2, coluna3 = st.columns([1,1,1.8])
-        with st.container():
-
-            with coluna1:
-                #jogadores ataque
-                st.write("**Atacando:**")
-                for jogador in jogadores_ataque(time_usuario_cruzamento[id]):
-                    st.markdown(f"{jogador}")
-
-            with coluna2:
-                #jogadores Defesa
-                st.write("**Defendendo:**")
-                for jogador in jogadores_defesa(time_usuario_cruzamento[id]):
-                    st.markdown(f"{jogador}")
-
-            with coluna3:
-                #lugar do Campo.
-                # st.markdown("**Zona do Campo**")
-                zona = time_usuario_cruzamento[id]["zona"]
-                figura_cortada = desenho_zona(lado_a,zona)
-                st.pyplot(figura_cortada)
+        with coluna3:
+            #lugar do Campo.
+            # st.markdown("**Zona do Campo**")
+            zona = cruzamentos[id]["zona"]
+            figura_cortada = desenho_zona(lado_a,zona)
+            st.pyplot(figura_cortada)

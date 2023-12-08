@@ -28,21 +28,29 @@ nome_segundo_time = segundo_time["nome"]
 #primeiro_time
 aparicoes_primeiro_time_ataque = {}
 n_aparicoes_primeiro_time_ataque = {}
+jogadores_primeiro_time = []
 for id in range(len(primeiro_time_cruzamentos)):
     aparicoes_primeiro_time_ataque = conta_aparicoes_ataque("nome",primeiro_time_cruzamentos[id], aparicoes_primeiro_time_ataque)
     n_aparicoes_primeiro_time_ataque = conta_aparicoes_ataque("numero",primeiro_time_cruzamentos[id], n_aparicoes_primeiro_time_ataque)
+    jogadores_primeiro_time = lista_jogadores(jogadores_primeiro_time,primeiro_time_cruzamentos[id])
+
 #segundo_timeersário
 aparicoes_segundo_time_ataque = {}
 n_aparicoes_segundo_time_ataque = {}
+jogadores_segundo_time = []
 for id in range(len(segundo_time_cruzamentos)):
     aparicoes_segundo_time_ataque = conta_aparicoes_ataque("nome",segundo_time_cruzamentos[id], aparicoes_segundo_time_ataque)
     n_aparicoes_segundo_time_ataque = conta_aparicoes_ataque("numero",segundo_time_cruzamentos[id], n_aparicoes_segundo_time_ataque)
+    jogadores_segundo_time = lista_jogadores(jogadores_segundo_time,segundo_time_cruzamentos[id])
 
+print (jogadores_segundo_time)
 #destaques das equipes
 #primeiro_time
 destaques_primeiro_time = dict(sorted(aparicoes_primeiro_time_ataque.items(), key=lambda item: item[1], reverse=True)[:5])
 #segundo_time
 destaques_segundo_time = dict(sorted(aparicoes_segundo_time_ataque.items(), key=lambda item: item[1], reverse=True)[:5])
+
+
 
 
 #porcentagem por zona (frequência)
@@ -111,3 +119,42 @@ escrita_b = {"E2.2": [92, 55, 89.5, 51],
                  "D1.1": [70,20,67.5,16],
                  "D3": [86,16,84.5,12],
                  }
+
+
+instantes_primeiro_time =[]
+for id in range(len(primeiro_time_cruzamentos)):
+    instantes_primeiro_time.append(primeiro_time_cruzamentos[id]["instante_cruzamento"])
+
+instantes_segundo_time = []
+for id in range(len(segundo_time_cruzamentos)):
+    instantes_segundo_time.append(segundo_time_cruzamentos[id]["instante_cruzamento"])
+
+print(instantes_segundo_time)
+
+
+
+
+#para filtros
+zona_time_1 = ["Selecionar"]
+for id in range(len(primeiro_time_cruzamentos)):
+    if primeiro_time_cruzamentos[id]["zona"] not in zona_time_1:
+        zona_time_1.append(primeiro_time_cruzamentos[id]["zona"])
+
+zona_time_2 = ["Selecionar"]
+for id in range(len(segundo_time_cruzamentos)):
+    if segundo_time_cruzamentos[id]["zona"] not in zona_time_2:
+        zona_time_2.append(segundo_time_cruzamentos[id]["zona"])        
+
+filtro = {"zonas": [],
+          "desfecho": [],
+          "jogador" : []}
+
+desfechos = ["Selecionar","Bem-Sucedido", "Perdido", "Bloqueado"]
+
+jogadores_1 = ["Selecionar"]
+for i in range(len(jogadores_primeiro_time)):
+    jogadores_1.append(jogadores_primeiro_time[i])
+
+jogadores_time2 = ["Selecionar"]
+for i in range(len(jogadores_segundo_time)):
+    jogadores_time2.append(jogadores_segundo_time[i])
