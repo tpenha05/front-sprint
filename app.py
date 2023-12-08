@@ -12,8 +12,20 @@ from IPython.display import HTML
 from rupturas.campo_caio import *
 from rupturas.dashboard import *
 
+
 # 1- Função principal para o aplicativo
 def main():
+        # Inicialize os atributos se ainda não estiverem presentes
+    if 'desfechos_rep' not in st.session_state:
+        st.session_state.desfechos_rep = None
+    if 'zonas' not in st.session_state:
+        print('entrou')
+        st.session_state.zonas = None
+    
+    if 'jogador' not in st.session_state:
+        st.session_state.jogador = None
+    if 'time' not in st.session_state:
+        st.session_state.time = None
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
         st.set_page_config(layout="centered")
         login_cadastro()
@@ -22,10 +34,15 @@ def main():
             data = json.load(f)
             time = 'Palmeiras'
             id = '1'
-        trata_dados(data, time, id, 'quebra')
+
+        st.session_state['ir_para_analise'] = True
+        trata_dados(data, st.session_state.time, id, st.session_state.zonas, st.session_state.jogador, st.session_state.desfechos_rep)
+        
     else:
         st.set_page_config(layout="wide")
         paginas()
+
+    
 
 # 2- Vídeo
 def pega_dados_videos(path_dado):
@@ -115,7 +132,21 @@ def video_teste():
         st.warning("Chave selecionada não encontrada no dicionário.")
 
 # 3- Dados
-def trata_dados(dados, time, id, tipo):
+def trata_dados(dados, time, id, zona, jogador, desfecho):
+        if zona != None:
+            valor = dados['time'][id]['zonas'][zona]
+            zonas = zona
+            novo_zonas = {f'{zona}': valor}
+            dados['time'][id]['zonas'] = novo_zonas
+            dados['time'][id]['rupturas'] = [ruptura for ruptura in dados['time'][id]['rupturas'] if ruptura['zona_defesa'] == zona]            
+        #Filtro por desfecho
+        if desfecho != None:
+            dados['time'][id]['rupturas'] = [ruptura for ruptura in dados['time'][id]['rupturas'] if ruptura['desfecho'] == desfecho]
+            
+        #Filtro por jogador
+        if jogador != None:
+            dados['time'][id]['rupturas'] = [ruptura for ruptura in dados['time'][id]['rupturas'] if ruptura['nome_jogador_ruptura'] == jogador]
+        
     #jogadores numero de rupturas
         dicionario_rupturas = [{}]
         total_rupturas = {}
@@ -123,9 +154,10 @@ def trata_dados(dados, time, id, tipo):
         contador = 0
         porcentagem_campo = {}
         pocentagem_campo_final = []
+        desfechos = {}
         for ruptura in dados['time'][id]['rupturas']:
-            
             instante_ruptura = ruptura.get('instante_ruptura', None)
+
             if not any(item.get('instante_ruptura') == instante_ruptura for item in dicionario_rupturas):
                 novo_registro = {
                     "Jogada": contador,
@@ -135,18 +167,31 @@ def trata_dados(dados, time, id, tipo):
                     'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
                 }
                 dicionario_rupturas.append(novo_registro)
-            contador += 1 
+
+            if ruptura['desfecho'] not in desfechos:
+                desfechos[ruptura['desfecho']] = 1
+            else:
+                desfechos[ruptura['desfecho']] += 1
+
             if ruptura['nome_jogador_ruptura'] not in total_rupturas:
-                total_rupturas[ruptura['nome_jogador_ruptura']] = 0
-            total_rupturas[ruptura['nome_jogador_ruptura']] += 1
-        #Desfechos Lista  
-        
+                total_rupturas[ruptura['nome_jogador_ruptura']] = 1
+            else:
+                total_rupturas[ruptura['nome_jogador_ruptura']] += 1
+
+            contador += 1 
+
+        # Desfechos Lista
+        print(desfechos)
+        dados['time'][id]['desfechos'] = desfechos
+
         total_desfechos = dados['time'][id]['desfechos']
+        print(total_desfechos)
+
         df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
         df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
         cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
         ######
-        zonas = ['Zona 2','Zona 1', 'Zona 1 - B', 'Zona 2 - B' ]
+        zonas = ['Zona 1', 'Zona 1 - B', 'Zona 2', 'Zona 2 - B']
         for zona in dados['time'][id]['zonas']:
             if zona in zonas:
                 porcentagem_campo[zona] = dados['time'][id]['zonas'][zona]
@@ -156,9 +201,10 @@ def trata_dados(dados, time, id, tipo):
             pocentagem_campo_final.append(f'{zona}')
             pocentagem_campo_final.append(f'{porcentagem:.2f}%')
         ##########
-        dashboards(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados)
-        filtro_dados(None, None, df)
+        dashboards(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados, id)
+        #filtro_dados(None, None, df)
 
+#filtrar por desfecho
 def filtro_dados(dicionario_rupturas, total_rupturas, df):
     #filtro por Desfecho
     desfecho_especifico = 'Foi desarmado'
@@ -166,24 +212,113 @@ def filtro_dados(dicionario_rupturas, total_rupturas, df):
     porcentagem_restante = 100 - df_filtrado['Porcentagem'].sum()
     df_outro = pd.DataFrame({'Desfecho': ['Outro'], 'Quantidade': [df_filtrado['Quantidade'].sum()], 'Porcentagem': [porcentagem_restante]})
     df_final = pd.concat([df_filtrado, df_outro], ignore_index=True)
-    print(df_final)
+
+
+
+
+def filtro_rup(dados, df_desfechos, id):
+            time = ['Nenhum']
+            desfechos = ['Nenhum']
+            jogadores = ['Nenhum']
+
+            dados_zona = dados["time"][id]["zonas"]
+            zonas = ['Nenhum']
+            for zona in dados_zona.keys():
+                if not zona.startswith("desfechos"):
+                    zonas.append(zona)
+            for times in dados['time']:
+                time.append(dados['time'][times]['nome'])
+            for desfecho in dados['time']['1']['desfechos']:
+                desfechos.append(desfecho)
+            for jogador in df_desfechos:
+                jogadores.append(jogador)
+            with st.expander("Filtros"):
+                col1, col2 = st.columns(2)
+                with col1:
+                    Zona_rup = st.selectbox('Filtro por zona', zonas)
+                    
+                    Desfecho = st.selectbox('Filtro por Desfecho', desfechos)
+                    
+                with col2:
+                    Jogador = st.selectbox('Filtro por Jogador', jogadores)
+                    
+                    Time = st.selectbox('Filtro por time', time)
+              
+                if st.button('Filtrar'):
+                    if Desfecho == 'Nenhum':
+                        Desfecho = None
+                    print('if',Zona_rup)
+                    if Zona_rup == 'Nenhum':
+                        Zona_rup = None
+                    print('depois',Zona_rup)
+                    if Jogador == 'Nenhum':
+                        Jogador = None
+                    st.session_state.desfechos_rep = Desfecho
+                    st.session_state.zonas = Zona_rup
+                    st.session_state.jogador = Jogador
+                    st.session_state.time = Time
+                    st.session_state['ir_para_analise'] = True
+                    st.rerun()
+                if st.button('Limpar Filtros'):
+                    st.session_state.desfechos_rep = None
+                    st.session_state.zonas = None
+                    st.session_state.jogador = None
+                    st.session_state.time = None
+                    st.rerun()
+                Zona_rup = None
+                Desfecho =  None
+                Jogador = None
+                Time = None
+
+
 
 # 4- DashBoards
-def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
-
+def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados, id):
     with open("design/style/dashboard.css") as d:
         st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-
-    if st.button("Voltar"):
+    
+    if st.button(f"Voltar"):
         st.session_state['ir_para_analise'] = False
         st.rerun()
+    
 
     st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
 
     tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
-
     with tab1:
-        dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados)
+        with open("design/style/rupturas.css") as d:
+            st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
+        json_rupturas = json.dumps(dados,indent=4,separators=(',', ': ')).encode('utf-8')
+        st.download_button(
+        label= "Baixar Rupturas",
+        data = json_rupturas,
+        file_name = "rupturas.json",
+        mime="application/json"
+        )
+
+        filtro_rup(dados,df_desfechos, id)
+
+                
+        col1, space, col2 = st.columns([8,1,8])
+
+        with col1:
+
+            figura = desenhar_campo(lista_porcentagem)
+            st.pyplot(figura)
+
+            fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
+            st.plotly_chart(fig)
+            st.write('Quantidade de desfechos por jogador')
+            st.dataframe(df_desfechos, width=250)
+
+        with col2:
+            quantidade = []
+            for i in range(len(df_rupturas)-1):
+                quantidade.append(i)
+            st.subheader("Seleção de Rupturas")
+            jogada = st.selectbox('',quantidade)
+            st.write("---")
+            st.dataframe(df_rupturas)
 
     with tab2:
         dashboard_cruzamento()
@@ -271,6 +406,7 @@ def pagina_partidas(partidas):
         with col3:
             if st.button('Estatísticas', key=f'botao_analise_{index}'):
                 st.session_state['ir_para_analise'] = True
+                
                 st.rerun()
 
 # 7- Controle de navegação entre as páginas
