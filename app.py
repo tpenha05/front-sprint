@@ -178,6 +178,10 @@ def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfech
         st.session_state['ir_para_analise'] = False
         st.rerun()
 
+    image = Image.open('design/photos/logo.webp')
+    st.image(image)
+
+
     st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
 
     tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
@@ -231,39 +235,44 @@ def pagina_partidas(partidas):
 
     image = Image.open('design/photos/logo.webp')
     st.image(image)
+    inicial, col2, end = st.columns([1,2,1])
+    with col2:
+        if 'clube' in st.session_state:
+            clube_usuario = st.session_state['clube']
+            st.title(f"Estatísticas Delta Goal - {clube_usuario}")
+        else:
+            st.title(f"Partidas")
+            st.write("Clube não definido ou não informado.")
 
-    if 'clube' in st.session_state:
-        clube_usuario = st.session_state['clube']
-        st.title(f"Estatísticas Delta Goal - {clube_usuario}")
-    else:
-        st.title(f"Partidas")
-        st.write("Clube não definido ou não informado.")
+    inicial,col1,end = st.columns([1,3,1])
+    with col1:
+        st.write('---')
+        st.subheader("Filtros Avançados") 
+        partidas_dic = partidas['partidas'][0]
+        df_partidas = pd.DataFrame(partidas_dic)
+        df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
-    st.subheader("Filtros Avançados") 
-    partidas_dic = partidas['partidas'][0]
-    df_partidas = pd.DataFrame(partidas_dic)
-    df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
-
-    adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
-    adversario_selecionado = st.selectbox("", adversarios)
-    min_data, max_data = df_partidas['data'].min(), date.today()
-    data_inicial, data_final = st.slider(
-        "",
-        min_value=min_data,
-        max_value=max_data,
-        value=(min_data, max_data),
-        format="DD/MM/YYYY"
-    )
-
-    st.subheader("Lista de Partidas")
+        adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
+        adversario_selecionado = st.selectbox("", adversarios)
+        min_data, max_data = df_partidas['data'].min(), date.today()
+        data_inicial, data_final = st.slider(
+            "",
+            min_value=min_data,
+            max_value=max_data,
+            value=(min_data, max_data),
+            format="DD/MM/YYYY"
+        )
+        
+        st.write('---')
 
     df_filtrado = df_partidas.copy()
     if adversario_selecionado != "Todos os Adversários":
         df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
     df_filtrado = df_filtrado[(df_filtrado['data'] >= data_inicial) & (df_filtrado['data'] <= data_final)]
 
+    # st.subheader("Lista de Partidas")
     for index, partida in df_filtrado.iterrows():
-        col1,space,col2,col3 = st.columns([2,0.66,5,2])
+        inicial,col1,space,col2,col3,end = st.columns([3,2,0.66,5,2,3])
         with col1:
             st.subheader(f"{partida['data'].strftime('%d/%m/%Y')}")
         with col2:
@@ -275,19 +284,19 @@ def pagina_partidas(partidas):
 
 # 7- Controle de navegação entre as páginas
 def paginas():
-    sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
-    st.sidebar.image(sidebar_image, width=200)
-    st.sidebar.subheader("")
+    # sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
+    # st.sidebar.image(sidebar_image, width=200)
+    # st.sidebar.subheader("")
     
-    opcoes = ["Partidas", "Vídeos"]
-    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
+    # opcoes = ["Partidas", "Vídeos"]
+    # opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
 
     # Carregando a página selecionada
-    if opcao_pagina == "Partidas":
-        dados_partidas = partidas()
-        pagina_partidas(dados_partidas)
-    elif opcao_pagina == "Vídeos":
-        video_teste()
+    # if opcao_pagina == "Partidas":
+    dados_partidas = partidas()
+    pagina_partidas(dados_partidas)
+    # elif opcao_pagina == "Vídeos":
+    #     video_teste()
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":

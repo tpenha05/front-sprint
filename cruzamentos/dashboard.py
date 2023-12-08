@@ -1,12 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from funcoes import *
-from moviepy.editor import VideoFileClip
-import os 
-from PIL import Image
-from datetime import date
-from time import sleep
 from .metade_certa import *
 from .cruz_funcoes import *
 from .esboço_campo import *
@@ -14,6 +8,8 @@ from .geral import *
 from .graficos_cruzamentos import *
 from app import trata_video_cruzamentos, pega_dados_videos
 from IPython.display import HTML
+import plotly.graph_objs as go
+from datetime import datetime
 
 def dashboard_cruzamento():
     with open("design/style/cruzamento.css") as d:
@@ -92,11 +88,11 @@ def dashboard_cruzamento():
             lista_id.append(f"Cruzamento {id + 1}")
         tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
 
-        st.subheader("Seleção de Cruzamentos")
+        st.subheader("Lances")
 
         # Lista para seleção do cruzamento
         lista_id = [f"Cruzamento {id+1}" for id in range(len(time_usuario_cruzamento))]
-        opcao_selecionada = st.selectbox('', lista_id)
+        opcao_selecionada = st.selectbox('Lista de cruzamentos', lista_id)
         opcao_selecionada = opcao_selecionada.split(" ")
         id = int(opcao_selecionada[1]) -1 
 
@@ -140,3 +136,68 @@ def dashboard_cruzamento():
                 zona = time_usuario_cruzamento[id]["zona"]
                 figura_cortada = desenho_zona(lado_a,zona)
                 st.pyplot(figura_cortada)
+
+
+    # st.subheader("Linha do Tempo Cruzamentos")
+    # instantes_primeiro_time =[]
+    # for id in range(len(primeiro_time_cruzamentos)):
+    #     instantes_primeiro_time.append(primeiro_time_cruzamentos[id]["instante_cruzamento"])
+
+    # instantes_segundo_time = []
+    # for id in range(len(segundo_time_cruzamentos)):
+    #     instantes_segundo_time.append(segundo_time_cruzamentos[id]["instante_cruzamento"]) 
+
+
+    # instantes_int_1 = []
+    # instantes_int_2 = []
+
+    # for horario in instantes_primeiro_time:
+    #     tempo_dt = datetime.strptime(horario, '%H:%M:%S')
+    #     instantes_int_1.append(tempo_dt.minute + (tempo_dt.hour*60))
+
+
+    # for horario in instantes_segundo_time:
+    #     tempo_dt = datetime.strptime(horario, '%H:%M:%S')
+    #     instantes_int_2.append(tempo_dt.minute + (tempo_dt.hour*60))  
+
+    # trace_time1 = go.Scatter(
+    #     x=instantes_int_1,
+    #     y=[1] * len(instantes_int_1),
+    #     mode='markers+text',
+    #     text=[f"{evento}'" for evento in instantes_int_1],
+    #     marker=dict(
+    #         symbol='circle',
+    #         size=10,
+    #         color='blue',
+    #     ),
+    #     textposition='top center',
+    # )
+
+    # trace_time2 = go.Scatter(
+    #     x=instantes_int_2,
+    #     y=[-1] * len(instantes_int_2),
+    #     mode='markers+text',
+    #     text=[f"{evento}'" for evento in instantes_int_2],
+    #     marker=dict(
+    #         symbol='circle',
+    #         size=10,
+    #         color='red',
+    #     ),
+    #     textposition='bottom center',
+    # )
+
+    # # Criando o layout do gráfico
+    # layout = dict(
+    #     yaxis=dict(
+    #         showgrid=False,
+    #         showticklabels=False,
+    #         range=[-2, 2],  # Definindo a faixa vertical
+    #     ),
+    #     xaxis=dict(
+    #         title='Tempo',
+    #     ),
+    #     title='Linha do Tempo',
+    # )
+
+    # fig = go.Figure(data=[trace_time1, trace_time2], layout=layout)
+    # st.plotly_chart(fig)

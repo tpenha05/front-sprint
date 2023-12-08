@@ -26,7 +26,7 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
         # coluna1, coluna2 = st.columns([1,1])
         # with coluna1:
         fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
         # with coluna2:
         st.write('Quantidade de desfechos por jogador')
         st.dataframe(df_desfechos, width=250)
@@ -34,9 +34,9 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     with col2:
         quantidade = []
         for i in range(len(df_rupturas)-1):
-            quantidade.append(i)
-        st.subheader("Seleção de Rupturas")
-        jogada = st.selectbox('',quantidade)
+            quantidade.append(f"Ruptura {i+1}")
+        st.subheader("Lances")
+        jogada = st.selectbox('Lista de rupturas', quantidade)
         st.write("---")
         st.dataframe(df_rupturas)
         # st.write('You selected:', jogada)
