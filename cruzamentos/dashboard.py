@@ -1,12 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from funcoes import *
-from moviepy.editor import VideoFileClip
-import os 
-from PIL import Image
-from datetime import date
-from time import sleep
 from .metade_certa import *
 from .cruz_funcoes import *
 from .esboço_campo import *
@@ -14,6 +8,8 @@ from .geral import *
 from .graficos_cruzamentos import *
 from app import trata_video_cruzamentos, pega_dados_videos
 from IPython.display import HTML
+import plotly.graph_objs as go
+from datetime import datetime
 
 def dashboard_cruzamento():
     with open("design/style/cruzamento.css") as d:
@@ -92,11 +88,11 @@ def dashboard_cruzamento():
             lista_id.append(f"Cruzamento {id + 1}")
         tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
 
-        st.subheader("Seleção de Cruzamentos")
+        st.subheader("Lances")
 
         # Lista para seleção do cruzamento
         lista_id = [f"Cruzamento {id+1}" for id in range(len(time_usuario_cruzamento))]
-        opcao_selecionada = st.selectbox('', lista_id)
+        opcao_selecionada = st.selectbox('Lista de cruzamentos', lista_id)
         opcao_selecionada = opcao_selecionada.split(" ")
         id = int(opcao_selecionada[1]) -1 
 
