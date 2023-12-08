@@ -95,7 +95,7 @@ def dashboard_cruzamento():
 
                 jogador_time_1 = st.selectbox('Filtro por jogador primeiro time', jogadores_1)
                 filtro["jogador"] = jogador_time_1
-
+            with col2:
                 desfechos_1 = st.selectbox('Filtro por desfecho primeiro time', desfechos)
                 filtro["desfecho"] = desfechos_1
 
