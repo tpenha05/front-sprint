@@ -57,6 +57,7 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
 
             st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
             st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
+            
         else:
             st.warning("Chave selecionada não encontrada no dicionário.")
 
