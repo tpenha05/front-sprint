@@ -5,7 +5,35 @@ import os
 from cruzamentos.dashboard import *
 import json 
 from rupturas.campo_caio import *
-from app import *
+
+def converter_tempo_para_segundos(tempo_str):
+    if not tempo_str:
+        return None
+
+    horas, minutos, segundos = map(int, tempo_str.split(':'))
+
+    return horas * 3600 + minutos * 60 + segundos
+
+def trata_video_ruptura(data_rupturas):
+    
+    tempos_rupturas = []
+    for time_id, time_data in data_rupturas["time"].items():
+        rupturas = time_data["rupturas"]
+        if time_id == "1":
+            for ruptura in rupturas:
+                inicio_ruptura = ruptura["inicio_ruptura"]
+                tempos_rupturas.append(converter_tempo_para_segundos(inicio_ruptura))
+                tempos_rupturas.sort()
+
+    dic_tempo_rupturas = {} #a key representa o numero da ruptura e a tupla o inicio e final do video em segundos 
+    numero_ruptura = 1
+    for ruptura_tempo_sec in tempos_rupturas:
+        inicio_video = ruptura_tempo_sec - 5
+        final_video = ruptura_tempo_sec + 5
+        dic_tempo_rupturas[numero_ruptura] = (inicio_video,final_video)
+        numero_ruptura += 1
+
+    return dic_tempo_rupturas
 
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
     with open("design/style/rupturas.css") as d:
@@ -35,7 +63,7 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     with col2:
         quantidade = []
         for i in range(len(df_rupturas)-1):
-            quantidade.append(f"Ruptura {i+1}")
+            quantidade.append(i+1)
         st.subheader("Lances")
         tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
         jogada = st.selectbox('Lista de rupturas',quantidade,key=quantidade)
