@@ -5,7 +5,7 @@ import os
 from cruzamentos.dashboard import *
 import json 
 from rupturas.campo_caio import *
-from app import trata_video_ruptura
+from app import *
 
 def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfechos, lista_porcentagem, dados):
     with open("design/style/rupturas.css") as d:
