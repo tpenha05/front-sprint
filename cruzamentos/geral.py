@@ -145,9 +145,14 @@ for id in range(len(segundo_time_cruzamentos)):
     if segundo_time_cruzamentos[id]["zona"] not in zona_time_2:
         zona_time_2.append(segundo_time_cruzamentos[id]["zona"])        
 
-filtro = {"zonas": [],
+filtro_time_1 = {"zonas": [],
           "desfecho": [],
           "jogador" : []}
+
+filtro_time_2 = {"zonas": [],
+          "desfecho": [],
+          "jogador" : []}
+
 
 desfechos = ["Selecionar","Bem-Sucedido", "Perdido", "Bloqueado"]
 
