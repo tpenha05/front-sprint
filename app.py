@@ -19,7 +19,6 @@ def main():
     if 'desfechos_rep' not in st.session_state:
         st.session_state.desfechos_rep = None
     if 'zonas' not in st.session_state:
-        print('entrou')
         st.session_state.zonas = None
     
     if 'jogador' not in st.session_state:
@@ -33,7 +32,7 @@ def main():
         with open('quebra.json', 'r') as f:
             data = json.load(f)
             time = 'Palmeiras'
-            id = '1'
+            id = '5'
 
         st.session_state['ir_para_analise'] = True
         trata_dados(data, st.session_state.time, id, st.session_state.zonas, st.session_state.jogador, st.session_state.desfechos_rep)
@@ -153,8 +152,9 @@ def trata_dados(dados, time, id, zona, jogador, desfecho):
         total_desfechos = {}
         contador = 0
         porcentagem_campo = {}
-        pocentagem_campo_final = []
+        pocentagem_campo_final = {}
         desfechos = {}
+        zonas_campo = {}
         for ruptura in dados['time'][id]['rupturas']:
             instante_ruptura = ruptura.get('instante_ruptura', None)
 
@@ -167,7 +167,12 @@ def trata_dados(dados, time, id, zona, jogador, desfecho):
                     'nome_jogador_ruptura': ruptura.get('nome_jogador_ruptura', None)
                 }
                 dicionario_rupturas.append(novo_registro)
-
+                if novo_registro['zona'] not in zonas_campo:
+                    zonas_campo[novo_registro['zona']] = 1
+                else:
+                    zonas_campo[novo_registro['zona']] += 1
+                
+                
             if ruptura['desfecho'] not in desfechos:
                 desfechos[ruptura['desfecho']] = 1
             else:
@@ -177,43 +182,31 @@ def trata_dados(dados, time, id, zona, jogador, desfecho):
                 total_rupturas[ruptura['nome_jogador_ruptura']] = 1
             else:
                 total_rupturas[ruptura['nome_jogador_ruptura']] += 1
-
+            
             contador += 1 
 
         # Desfechos Lista
-        print(desfechos)
+    
         dados['time'][id]['desfechos'] = desfechos
 
         total_desfechos = dados['time'][id]['desfechos']
-        print(total_desfechos)
 
         df = pd.DataFrame(list(total_desfechos.items()), columns=['Desfecho', 'Quantidade'])
         df['Porcentagem'] = (df['Quantidade'] / df['Quantidade'].sum()) * 100
         cores_personalizadas = ['#FF9999', '#66B2FF', '#99FF99']
         ######
         zonas = ['Zona 1', 'Zona 1 - B', 'Zona 2', 'Zona 2 - B']
-        for zona in dados['time'][id]['zonas']:
+        for zona in zonas_campo:
             if zona in zonas:
-                porcentagem_campo[zona] = dados['time'][id]['zonas'][zona]
+                porcentagem_campo[zona] = zonas_campo[zona]
         total = sum(porcentagem_campo.values())
         porcentagens_zonas = [porcentagem_campo[zona] / total * 100 if zona in porcentagem_campo else 0 for zona in zonas]
         for zona, porcentagem in zip(zonas, porcentagens_zonas):
-            pocentagem_campo_final.append(f'{zona}')
-            pocentagem_campo_final.append(f'{porcentagem:.2f}%')
+            pocentagem_campo_final[zona] = f'{porcentagem:.2f}%' 
+            
+        
         ##########
         dashboards(cores_personalizadas, dicionario_rupturas, total_rupturas, df, pocentagem_campo_final, dados, id)
-        #filtro_dados(None, None, df)
-
-#filtrar por desfecho
-def filtro_dados(dicionario_rupturas, total_rupturas, df):
-    #filtro por Desfecho
-    desfecho_especifico = 'Foi desarmado'
-    df_filtrado = df[df['Desfecho'] == desfecho_especifico].copy()
-    porcentagem_restante = 100 - df_filtrado['Porcentagem'].sum()
-    df_outro = pd.DataFrame({'Desfecho': ['Outro'], 'Quantidade': [df_filtrado['Quantidade'].sum()], 'Porcentagem': [porcentagem_restante]})
-    df_final = pd.concat([df_filtrado, df_outro], ignore_index=True)
-
-
 
 
 def filtro_rup(dados, df_desfechos, id):
@@ -228,7 +221,7 @@ def filtro_rup(dados, df_desfechos, id):
                     zonas.append(zona)
             for times in dados['time']:
                 time.append(dados['time'][times]['nome'])
-            for desfecho in dados['time']['1']['desfechos']:
+            for desfecho in dados['time'][id]['desfechos']:
                 desfechos.append(desfecho)
             for jogador in df_desfechos:
                 jogadores.append(jogador)
@@ -247,10 +240,8 @@ def filtro_rup(dados, df_desfechos, id):
                 if st.button('Filtrar'):
                     if Desfecho == 'Nenhum':
                         Desfecho = None
-                    print('if',Zona_rup)
                     if Zona_rup == 'Nenhum':
                         Zona_rup = None
-                    print('depois',Zona_rup)
                     if Jogador == 'Nenhum':
                         Jogador = None
                     st.session_state.desfechos_rep = Desfecho
