@@ -60,12 +60,12 @@ porcentagem_segundo_time = porcentagem_zona(segundo_time_cruzamentos, len(segund
 
 #Busca zona da jogada.
 zona = busca_zona(primeiro_time_cruzamentos[5])
-print(zona)
+# print(zona)
 
 
 #Pega tempo do cruzamento por id e transforma em segundos
 tempo = pega_tempo_cruzamento(primeiro_time_cruzamentos[5])
-print(tempo)
+# print(tempo)
 
 #Pega os desfechos dos cruzamentos
 desfechos_primeiro_time = calcula_desfecho(primeiro_time_cruzamentos)

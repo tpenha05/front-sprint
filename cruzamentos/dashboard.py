@@ -1,12 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from funcoes import *
-from moviepy.editor import VideoFileClip
-import os 
-from PIL import Image
-from datetime import date
-from time import sleep
 from .metade_certa import *
 from .cruz_funcoes import *
 from .esboço_campo import *
@@ -14,6 +8,8 @@ from .geral import *
 from .graficos_cruzamentos import *
 from app import trata_video_cruzamentos, pega_dados_videos
 from IPython.display import HTML
+import plotly.graph_objs as go
+from datetime import datetime
 
 def dashboard_cruzamento():
     with open("design/style/cruzamento.css") as d:
@@ -106,17 +102,6 @@ def dashboard_cruzamento():
                 desfechos_1 = st.selectbox('Filtro por desfecho primeiro time', desfechos)
                 filtro_time_1["desfecho"] = desfechos_1
             
-
-            # cruzamentos_1 = primeiro_time_cruzamentos
-            # if (filtro["zonas"] != "Selecionar") or (filtro["jogador"] != "Selecionar") or (filtro["desfecho"]) != "Selecionar":
-            #     cruz_filtrado = []
-            #     for i in range(len(cruzamentos_1)):
-            #         if (filtro["zonas"] in cruzamentos_1[i]["zona"]) and (filtro["jogador"] in cruzamentos_1[i]["nome_jogadores_time_cruzando"]) and (filtro["desfecho"] in cruzamentos_1[i]["desfecho"]):
-            #             cruz_filtrado.append(cruzamentos_1[i])
-            #     cruzamentos = cruz_filtrado
-
-            # else:
-            #     cruzamentos = primeiro_time_cruzamentos
             cruzamentos = filtra_cruz(filtro_time_1,primeiro_time_cruzamentos)
 
         funcao_exibe_dados_cruzamento(cruzamentos)
@@ -136,21 +121,9 @@ def dashboard_cruzamento():
                 desfechos_2 = st.selectbox('Filtro por desfecho segundo time', desfechos)
                 filtro_time_2["desfecho"] = desfechos_2
 
-            # cruzamentos_2 = segundo_time_cruzamentos
-            # if (filtro_time_2["zonas"] != "Selecionar") or (filtro_time_2["jogador"] != "Selecionar") or (filtro_time_2["desfecho"]) != "Selecionar":
-            #     cruz_filtrado = []
-                    
-            #     for i in range(len(cruzamentos_2)):
-            #         if (filtro_time_2["zonas"] in cruzamentos_2[i]["zona"]) or (filtro_time_2["jogador"] in cruzamentos_2[i]["nome_jogadores_time_cruzando"]) or (filtro_time_2["desfecho"] in cruzamentos_2[i]["desfecho"]):
-            #             cruz_filtrado.append(cruzamentos_2[i])
-            #     cruzamentos = cruz_filtrado
-                
-            # else: 
-            #     cruzamentos = segundo_time_cruzamentos
             cruzamentos = filtra_cruz(filtro_time_2,segundo_time_cruzamentos)
 
         funcao_exibe_dados_cruzamento(cruzamentos)
-
         
 def funcao_exibe_dados_cruzamento(cruzamentos):
     #Caixa para selecionar o cruzamento, pegando o id do cruzamento, sendo ele (id-1)
@@ -161,13 +134,14 @@ def funcao_exibe_dados_cruzamento(cruzamentos):
         lista_id.append(f"Cruzamento {id + 1}")
     tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
 
-    st.subheader("Seleção de Cruzamentos")
+    st.subheader("Lances")
     if len(cruzamentos) == 0:
             st.markdown("Combinação de filtro não encontrada!")
     else:
         # Lista para seleção do cruzamento
+
         lista_id = [f"Cruzamento {id+1}" for id in range(len(cruzamentos))]
-        opcao_selecionada = st.selectbox('', lista_id)
+        opcao_selecionada = st.selectbox('Lista de cruzamentos', lista_id)
         opcao_selecionada = opcao_selecionada.split(" ")
         id = int(opcao_selecionada[1]) -1 
 
