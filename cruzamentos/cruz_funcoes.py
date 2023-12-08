@@ -56,3 +56,61 @@ def pega_tempo_cruzamento(cruzamento):
     tempo = cruzamento["instante_cruzamento"].split(":")
     tempo = int(tempo[0])*3600 + int(tempo[1])*60 + int(tempo[2])
     return tempo
+
+def lista_jogadores(lista_dos_jogadores,cruzamento):
+    jogadores_ataque = cruzamento["nome_jogadores_time_cruzando"]
+    lista_jogadores_ataque = jogadores_ataque.split(",")
+    for jogador in lista_jogadores_ataque:
+        if jogador not in lista_dos_jogadores:
+            lista_dos_jogadores.append(jogador.strip())
+    return lista_dos_jogadores
+
+
+def filtra_cruz( filtro, time_cruzamentos):
+    cruzamentos_1 = time_cruzamentos
+    cruzamentos = []
+    if (filtro["zonas"] != "Selecionar") or (filtro["jogador"] != "Selecionar") or (filtro["desfecho"]) != "Selecionar":
+        cruz_filtrado = []
+        if (filtro["zonas"] != "Selecionar") and (filtro["jogador"] == "Selecionar") and (filtro["desfecho"]) == "Selecionar":
+            for i in range(len(cruzamentos_1)):
+                if (filtro["zonas"] in cruzamentos_1[i]["zona"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+        elif (filtro["zonas"] != "Selecionar") and (filtro["jogador"] != "Selecionar") and (filtro["desfecho"]) == "Selecionar":
+            for i in range(len(cruzamentos_1)):
+                if (filtro["zonas"] in cruzamentos_1[i]["zona"]) and (filtro["jogador"] in cruzamentos_1[i]["nome_jogadores_time_cruzando"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+        elif (filtro["zonas"] != "Selecionar") and (filtro["jogador"] != "Selecionar") and (filtro["desfecho"] != "Selecionar"):
+            for i in range(len(cruzamentos_1)):
+                if (filtro["zonas"] in cruzamentos_1[i]["zona"]) and (filtro["jogador"] in cruzamentos_1[i]["nome_jogadores_time_cruzando"]) and (filtro["desfecho"] in cruzamentos_1[i]["desfecho"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+        elif (filtro["zonas"] != "Selecionar") and (filtro["jogador"] == "Selecionar") and (filtro["desfecho"] != "Selecionar"):
+            for i in range(len(cruzamentos_1)):
+                if (filtro["zonas"] in cruzamentos_1[i]["zona"]) and (filtro["desfecho"] in cruzamentos_1[i]["desfecho"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+
+        elif (filtro["zonas"] == "Selecionar") and (filtro["jogador"] != "Selecionar") and (filtro["desfecho"] == "Selecionar"):
+            for i in range(len(cruzamentos_1)):
+                if (filtro["jogador"] in cruzamentos_1[i]["nome_jogadores_time_cruzando"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+        
+        elif (filtro["zonas"] == "Selecionar") and (filtro["jogador"] != "Selecionar") and (filtro["desfecho"] != "Selecionar"):
+            for i in range(len(cruzamentos_1)):
+                if (filtro["jogador"] in cruzamentos_1[i]["nome_jogadores_time_cruzando"]) and (filtro["desfecho"] in cruzamentos_1[i]["desfecho"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+
+
+        elif (filtro["zonas"] == "Selecionar") and (filtro["jogador"] == "Selecionar") and (filtro["desfecho"] != "Selecionar"):
+            for i in range(len(cruzamentos_1)):
+                if (filtro["desfecho"] in cruzamentos_1[i]["desfecho"]):
+                    cruz_filtrado.append(cruzamentos_1[i])
+            cruzamentos = cruz_filtrado
+    else:
+        cruzamentos = time_cruzamentos
+        
+    return cruzamentos
