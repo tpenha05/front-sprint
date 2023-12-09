@@ -185,3 +185,4 @@ def funcao_exibe_dados_cruzamento(cruzamentos):
                 zona = cruzamentos[id]["zona"]
                 figura_cortada = desenho_zona(lado_a,zona)
                 st.pyplot(figura_cortada)
+                

@@ -6,6 +6,12 @@ from cruzamentos.dashboard import *
 import json 
 from rupturas.campo_caio import *
 
+def pega_dados_videos(path_dado):
+
+    file = open(path_dado)
+    data = json.load(file)
+    return data 
+
 def converter_tempo_para_segundos(tempo_str):
     if not tempo_str:
         return None
@@ -50,7 +56,7 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
     col1, space, col2 = st.columns([8,1,8])
     with col1:
         figura = desenhar_campo(lista_porcentagem)
-        st.pyplot(figura)
+        # st.pyplot(figura)
 
         # coluna1, coluna2 = st.columns([1,1])
         # with coluna1:
@@ -66,12 +72,10 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
             quantidade.append(i+1)
         st.subheader("Lances")
         tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
-        jogada = st.selectbox('Lista de rupturas',quantidade,key=quantidade)
+        jogada = st.selectbox('Lista de rupturas', quantidade, key=quantidade)
         st.write("---")
-        st.dataframe(df_rupturas)
-        # st.write('You selected:', jogada)
-
         start_time = None
+
         if jogada in quantidade:
             start_time = tempos_rupturas[jogada][0]
 
@@ -81,8 +85,11 @@ def dashboard_quebra(cores_personalizadas, df_rupturas, df_desfechos, contagem_d
             video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
 
             st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
+            st.write("---")
             st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
             
         else:
             st.warning("Chave selecionada não encontrada no dicionário.")
 
+        st.dataframe(df_rupturas)
+        # st.write('You selected:', jogada)
