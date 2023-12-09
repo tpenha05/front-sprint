@@ -26,7 +26,7 @@ def main():
     if 'time' not in st.session_state:
         st.session_state.time = None
     if 'usuario' not in st.session_state or st.session_state.usuario is None:
-        st.set_page_config(layout="centered")
+        # st.set_page_config(layout="centered")
         login_cadastro()
     elif 'ir_para_analise' in st.session_state and st.session_state['ir_para_analise']:
         with open('quebra.json', 'r') as f:
@@ -97,38 +97,6 @@ def trata_video_cruzamentos(data_cruzamentos):
         tempo_video_cruzamentos[numero_cruzamento] = (inicio_video,final_video)
         numero_cruzamento += 1
     return tempo_video_cruzamentos
-
-def video_teste():
-    with open("design/style/sidebar.css") as d:
-        st.markdown(f"<style>{d.read()}</style>", unsafe_allow_html=True)
-        
-    st.title("Colocando o vídeo teste")
-
-    tempos_cruzamentos = trata_video_cruzamentos(pega_dados_videos("cruzamentos.json"))
-    tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
-
-    st.write(tempos_rupturas)
-    st.write(tempos_cruzamentos)
-    
-    video_dict = st.radio("Selecione o dicionário de vídeo:", ("Rupturas", "Cruzamentos"))
-
-    selected_key = st.selectbox("Selecione a chave do vídeo:", list(tempos_rupturas.keys()) if video_dict == "Rupturas" else list(tempos_cruzamentos.keys()))
-
-    start_time = None
-    if video_dict == "Rupturas" and selected_key in tempos_rupturas:
-        start_time = tempos_rupturas[selected_key][0]
-    elif video_dict == "Cruzamentos" and selected_key in tempos_cruzamentos:
-        start_time = tempos_cruzamentos[selected_key][0]
-
-    if start_time is not None:
-        st.write(f"Tempo inicial selecionado: {start_time}")
-
-        video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
-
-        st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
-        st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
-    else:
-        st.warning("Chave selecionada não encontrada no dicionário.")
 
 # 3- Dados
 def trata_dados(dados, time, id, zona, jogador, desfecho):
@@ -273,6 +241,10 @@ def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfech
         st.rerun()
     
 
+    image = Image.open('design/photos/logo.webp')
+    st.image(image)
+
+
     st.subheader(f"{nome_primeiro_time} x {nome_segundo_time}")
 
     tab1, tab2 = st.tabs(["Rupturas", "Cruzamentos"])
@@ -288,27 +260,41 @@ def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfech
         )
 
         filtro_rup(dados,df_desfechos, id)
-
-                
         col1, space, col2 = st.columns([8,1,8])
-
         with col1:
-
             figura = desenhar_campo(lista_porcentagem)
             st.pyplot(figura)
-
             fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, use_container_width=True)
             st.write('Quantidade de desfechos por jogador')
             st.dataframe(df_desfechos, width=250)
 
         with col2:
             quantidade = []
             for i in range(len(df_rupturas)-1):
-                quantidade.append(i)
-            st.subheader("Seleção de Rupturas")
-            jogada = st.selectbox('',quantidade)
+                quantidade.append(i+1)
+            st.subheader("Lances")
+            tempos_rupturas = trata_video_ruptura(pega_dados_videos("quebra.json"))
+            jogada = st.selectbox('Lista de rupturas',quantidade,key=quantidade)
             st.write("---")
+
+            # st.write('You selected:', jogada)
+
+            start_time = None
+            if jogada in quantidade:
+                start_time = tempos_rupturas[jogada][0]
+
+            if start_time is not None:
+                st.write(f"Tempo inicial selecionado: {start_time}")
+
+                video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
+
+                st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
+                st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
+                
+            else:
+                st.warning("Chave selecionada não encontrada no dicionário.")
+
             st.dataframe(df_rupturas)
 
     with tab2:
@@ -357,39 +343,44 @@ def pagina_partidas(partidas):
 
     image = Image.open('design/photos/logo.webp')
     st.image(image)
+    inicial, col2, end = st.columns([1,2,1])
+    with col2:
+        if 'clube' in st.session_state:
+            clube_usuario = st.session_state['clube']
+            st.title(f"Estatísticas Delta Goal - {clube_usuario}")
+        else:
+            st.title(f"Partidas")
+            st.write("Clube não definido ou não informado.")
 
-    if 'clube' in st.session_state:
-        clube_usuario = st.session_state['clube']
-        st.title(f"Estatísticas Delta Goal - {clube_usuario}")
-    else:
-        st.title(f"Partidas")
-        st.write("Clube não definido ou não informado.")
+    inicial,col1,end = st.columns([1,3,1])
+    with col1:
+        st.write('---')
+        st.subheader("Filtros Avançados") 
+        partidas_dic = partidas['partidas'][0]
+        df_partidas = pd.DataFrame(partidas_dic)
+        df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
 
-    st.subheader("Filtros Avançados") 
-    partidas_dic = partidas['partidas'][0]
-    df_partidas = pd.DataFrame(partidas_dic)
-    df_partidas['data'] = pd.to_datetime(df_partidas['data'], format='%d/%m/%Y').dt.date
-
-    adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
-    adversario_selecionado = st.selectbox("", adversarios)
-    min_data, max_data = df_partidas['data'].min(), date.today()
-    data_inicial, data_final = st.slider(
-        "",
-        min_value=min_data,
-        max_value=max_data,
-        value=(min_data, max_data),
-        format="DD/MM/YYYY"
-    )
-
-    st.subheader("Lista de Partidas")
+        adversarios = ["Todos os Adversários"] + sorted(df_partidas['adversario'].unique().tolist())
+        adversario_selecionado = st.selectbox("", adversarios)
+        min_data, max_data = df_partidas['data'].min(), date.today()
+        data_inicial, data_final = st.slider(
+            "",
+            min_value=min_data,
+            max_value=max_data,
+            value=(min_data, max_data),
+            format="DD/MM/YYYY"
+        )
+        
+        st.write('---')
 
     df_filtrado = df_partidas.copy()
     if adversario_selecionado != "Todos os Adversários":
         df_filtrado = df_filtrado[df_filtrado['adversario'] == adversario_selecionado]
     df_filtrado = df_filtrado[(df_filtrado['data'] >= data_inicial) & (df_filtrado['data'] <= data_final)]
 
+    # st.subheader("Lista de Partidas")
     for index, partida in df_filtrado.iterrows():
-        col1,space,col2,col3 = st.columns([2,0.66,5,2])
+        inicial,col1,space,col2,col3,end = st.columns([3,2,0.66,5,2,3])
         with col1:
             st.subheader(f"{partida['data'].strftime('%d/%m/%Y')}")
         with col2:
@@ -402,19 +393,8 @@ def pagina_partidas(partidas):
 
 # 7- Controle de navegação entre as páginas
 def paginas():
-    sidebar_image = 'design/photos/Delta_Goal_NEGATIVO.png'  
-    st.sidebar.image(sidebar_image, width=200)
-    st.sidebar.subheader("")
-    
-    opcoes = ["Partidas", "Vídeos"]
-    opcao_pagina = st.sidebar.radio("", opcoes, index=opcoes.index(st.session_state.get('opcao_pagina', 'Partidas')))
-
-    # Carregando a página selecionada
-    if opcao_pagina == "Partidas":
-        dados_partidas = partidas()
-        pagina_partidas(dados_partidas)
-    elif opcao_pagina == "Vídeos":
-        video_teste()
+    dados_partidas = partidas()
+    pagina_partidas(dados_partidas)
 
 # Chamando a função principal para iniciar o aplicativo
 if __name__ == "__main__":

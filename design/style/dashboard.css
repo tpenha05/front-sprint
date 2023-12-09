@@ -12,3 +12,8 @@ header{
     background-color: black;
     color: white;
 }
+
+img, .img{
+    width: 30%;
+    height: auto;
+}
