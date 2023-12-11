@@ -176,7 +176,7 @@ def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfech
             fig = px.pie(contagem_desfechos, names='Desfecho', values='Quantidade', title='Quantidade de Desfechos', hover_data=['Porcentagem'])
             st.plotly_chart(fig, use_container_width=True)
             # with coluna2:
-            st.write('Quantidade de desfechos por jogador')
+            st.write('Desfechos:')
             st.dataframe(df_desfechos, width=250)
 
         with col2:
@@ -195,10 +195,8 @@ def dashboards(cores_personalizadas, df_rupturas, df_desfechos, contagem_desfech
                 start_time = tempos_rupturas[jogada][0]
 
             if start_time is not None:
-                st.write(f"Tempo inicial selecionado: {start_time}")
 
                 video_url = f"https://drive.google.com/file/d/1vWm45opnuiYNN0s1FFKx8DBekp-YX30R/preview?t={start_time}"
-
                 st.write(f"Reproduzindo o vídeo a partir de {start_time} segundos:")
                 st.write(HTML(f'<iframe src="{video_url}" width="640" height="360"></iframe>'))
                 

@@ -35,11 +35,11 @@ def dashboard_cruzamento():
     with col1:
         with st.container():
 
-            coluna_time1, coluna_time2 = st.columns(2)
+            coluna_time1, coluna_time2 = st.columns([0.5,2,2])
             with coluna_time1:
-                st.markdown(f"**{nome_primeiro_time} :**")
+                st.markdown(f"**{nome_primeiro_time}**")
             with coluna_time2:
-                st.markdown(f"**{nome_segundo_time} :**")
+                st.markdown(f"**{nome_segundo_time}**")
 
             st.pyplot(desenhar_campo_com_quadrado(porcentagem_primeiro_time, porcentagem_segundo_time,lado_a,lado_b))
 
